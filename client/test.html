@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>Test</title>
+		<script type="text/javascript" src="JsLib/jquery-3.1.0.js"></script>
+		<script type="text/javascript">
+			$.ajax({
+			  url: "DataControllers/OrderDataController.php",
+			  method: "POST",
+			  data:{
+			  	//"func":"create", "order":{"customerId":"1"}
+			  	"func":"delete", "id":"3"
+			  	/*"func":"update",
+			  	"location":{"id":"2",
+			  		"name":"Brice Canyon", 
+			  		"address":"Test",
+			  		"city":"Blah",
+			  		"state":"UT",
+			  		"zip":"44444",
+			  		"phone":"5181234567",
+			  		"primaryContact":"Some Person",
+			  		"lastFour":"5555"
+			  	}*/
+			  }
+			}).done(function(data){
+				console.log(data);
+			});
+		</script>
+	</head>
+	<body>
+	
+	</body>
+	<script>
+		
+	</script>
+</html>
