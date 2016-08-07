@@ -66,6 +66,8 @@ function ValidateProduct($data)
 	if(is_array($data))
 	{
 		$product = "";
+		$product["description"] = null;
+		
 		if(array_key_exists("id", $data))
 			$product["id"] = substr(intval($data["id"]), 0, 11);
 		if(array_key_exists("name", $data))

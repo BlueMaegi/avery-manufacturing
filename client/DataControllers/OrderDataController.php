@@ -39,7 +39,7 @@ if($command == "create" && isset($_POST['order']))
 
 if($command == "update" && isset($_POST['order']))
 {
-	$item = ValidateProduct($_POST['order']);
+	$item = ValidateOrder($_POST['order']);
 	if($item)
 	{
 		$success = UpdateOrder($item);

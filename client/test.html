@@ -4,11 +4,18 @@
 		<script type="text/javascript" src="JsLib/jquery-3.1.0.js"></script>
 		<script type="text/javascript">
 			$.ajax({
-			  url: "DataControllers/OrderDataController.php",
+			  url: "DataControllers/ShipmentDataController.php",
 			  method: "POST",
 			  data:{
-			  	//"func":"create", "order":{"customerId":"1"}
-			  	"func":"delete", "id":"3"
+			  	/*"func":"update", 
+			  	"shipment":{
+			  		"id":"3",
+			  		"orderId":"3", 
+			  		"rateType":"FirstClass", 
+			  		"status":"0",
+			  		"cost":"5.35"}*/
+			  	//"func":"delete", "orderId":"1", "productId":"9"
+			  	"func":"delete","id":"2"
 			  	/*"func":"update",
 			  	"location":{"id":"2",
 			  		"name":"Brice Canyon", 

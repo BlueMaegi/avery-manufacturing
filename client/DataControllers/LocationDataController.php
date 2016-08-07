@@ -65,6 +65,8 @@ function ValidateLocation($data)
 	if(is_array($data))
 	{
 		$location = "";
+		$location["primaryContact"] = null;
+		
 		if(array_key_exists("id", $data))
 			$location["id"] = intval(substr($data["id"], 0, 11));
 		if(array_key_exists("name", $data))
