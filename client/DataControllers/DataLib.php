@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Handlers/UserHandler.php');
 //-------------------------------------------------
 
 function ValidateRequest()
@@ -16,6 +17,19 @@ function ValidateRequest()
 	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
 }
 
+function ValidateUserRequest()
+{
+	$restFunctions = ["login", "logout", "refresh"];
+	if(isset($_POST['func']))
+	{
+		$command = strtolower(substr($_POST['func'], 0, 8));
+	 	if(in_array($command, $restFunctions))
+	 		return $command;
+	}
+	
+	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+}
+
 function ValidateIntParam($data)
 {
 	$integer = intval(substr($data,0,11));
@@ -23,6 +37,19 @@ function ValidateIntParam($data)
 		return $integer;
 		
 	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+}
+
+function ValidateToken()
+{
+	if(isset($_POST['id']) && isset($_POST['auth']))
+	{
+		$id = intval(substr($_POST['id'], 0, 11));
+		$token = SanitizeString(substr($_POST['id'], 0, 255)); //TODO: get a more exact length
+		if(CheckToken($id, $token))
+			return true;
+	}
+	
+	header($_SERVER["SERVER_PROTOCOL"]." 403 Unauthorized", true, 403);
 }
 
 function ToJson($resultSet)
