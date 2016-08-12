@@ -6,6 +6,7 @@ require_once('DataLib.php');
 //-------------------------------------------------
 
 $command = ValidateRequest();
+ValidateToken();
 
 if($command == "get" && !isset($_POST['id']))
 {
@@ -79,10 +80,10 @@ function ValidateLocation($data)
 			$location["state"] = substr(SanitizeString($data["state"]), 0, 3);
 		if(array_key_exists("zip", $data))
 			$location["zip"] = substr(SanitizeString($data["zip"]), 0, 10);
-		if(array_key_exists("primaryContact", $data))
-			$location["primaryContact"] = substr(SanitizeString($data["primaryContact"]), 0, 50);
 		if(array_key_exists("phone", $data))
 			$location["phone"] = substr(SanitizeString($data["phone"]), 0, 10);
+		if(array_key_exists("primaryContact", $data))
+			$location["primaryContact"] = substr(SanitizeString($data["primaryContact"]), 0, 50);
 				
 		if(array_key_exists("name", $location) && array_key_exists("address", $location)
 		 	&& array_key_exists("city", $location) && array_key_exists("state", $location) 

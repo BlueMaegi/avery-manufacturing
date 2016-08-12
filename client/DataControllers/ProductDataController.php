@@ -25,6 +25,7 @@ if($command == "get" && isset($_POST['id']))
 
 if($command == "create" && isset($_POST['product']))
 {
+	ValidateToken();
 	$item = ValidateProduct($_POST['product']);
 	if($item)
 	{
@@ -39,6 +40,7 @@ if($command == "create" && isset($_POST['product']))
 
 if($command == "update" && isset($_POST['product']))
 {
+	ValidateToken();
 	$item = ValidateProduct($_POST['product']);
 	if($item)
 	{
@@ -52,6 +54,7 @@ if($command == "update" && isset($_POST['product']))
 
 if($command == "delete" && isset($_POST['id']))
 {
+	ValidateToken();
 	$id = ValidateIntParam($_POST['id']);
 	$success = DeleteProduct($id);
 	if($success)

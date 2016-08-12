@@ -10,9 +10,12 @@ function Login($name, $pass)
 	$token = '';
 	if($id)
 		$token = GenerateToken($id);
+
+	$userData[] = $id;
+	$userData[] = $token;
 	
 	close_db();
-	return $token;
+	return $userData;
 }
 
 function Logout($id)
@@ -45,8 +48,8 @@ function GenerateToken($id)
 		$random = hash('crc32', $now.$id);
 		$hash = hash('sha512', $existing[0]['Id'].$existing[0]['Name'].$random);
 		$skip = rand(3, 9);
-		
-		$token = substr_replace($hash, $skip, IDX, 0);
+
+		$token = substr_replace($hash, strval($skip), IDX, 0);
 		for($i = 1; $i <= strlen($now); $i++)
 		{
 			$k = ($skip + 1) * $i * -1;
@@ -54,7 +57,7 @@ function GenerateToken($id)
 			$timeChar = substr($now, $i * -1, 1);
 			$token = substr_replace($token, $timeChar, $k, 0);
 		}
-		
+
 		do_query("UPDATE Clients SET Token = ? WHERE Id = ?","si", array($random, $id));
 		
 		return $token;

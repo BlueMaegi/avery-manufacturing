@@ -6,6 +6,7 @@ require_once('DataLib.php');
 //-------------------------------------------------
 
 $command = ValidateRequest();
+ValidateToken();
 
 if($command == "get" && !isset($_POST['id']) && isset($_POST['inventoryId']))
 {

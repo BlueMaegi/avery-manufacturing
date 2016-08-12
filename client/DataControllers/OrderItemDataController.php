@@ -9,12 +9,14 @@ $command = ValidateRequest();
 
 if($command == "get" && isset($_POST['orderId']) && !isset($_POST['productId']))
 {
+	ValidateToken();
 	$id = ValidateIntParam($_POST['orderId']);
 	echo ToJson(GetOrderItems($id));
 }
 
 if($command == "get" && isset($_POST['orderId']) && isset($_POST['productId']))
 {
+	ValidateToken();
 	$orderId = ValidateIntParam($_POST['orderId']);
 	$productId = ValidateIntParam($_POST['productId']);
 	$item = GetOrderItem($orderId, $productId);
@@ -54,6 +56,7 @@ if($command == "update" && isset($_POST['orderItem']))
 
 if($command == "delete" && isset($_POST['orderId']) && isset($_POST['productId']))
 {
+	ValidateToken();
 	$orderId = ValidateIntParam($_POST['orderId']);
 	$productId = ValidateIntParam($_POST['productId']);
 	$success = DeleteOrderItem($orderId, $productId);

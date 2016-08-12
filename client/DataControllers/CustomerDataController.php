@@ -39,6 +39,7 @@ if($command == "create" && isset($_POST['customer']))
 
 if($command == "update" && isset($_POST['customer']))
 {
+	ValidateToken();
 	$item = ValidateCustomer($_POST['customer']);
 	if($item)
 	{
@@ -52,6 +53,7 @@ if($command == "update" && isset($_POST['customer']))
 
 if($command == "delete" && isset($_POST['id']))
 {
+	ValidateToken();
 	$id = ValidateIntParam($_POST['id']);
 	$success = DeleteCustomer($id);
 	if($success)

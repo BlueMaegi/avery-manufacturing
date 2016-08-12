@@ -12,20 +12,20 @@ if($command == "login" && isset($_POST['name']) && isset($_POST['word']))
 	$name = substr(SanitizeString($_POST['name']), 0, 50);
 	$pass = substr(SanitizeString($_POST['word']), 0, 150);
 	$token = Login($name, $pass);
-	echo ToJson($token);
+	echo json_encode($token);
 }
 
-if($command == "logout" && isset($_POST['id']))
+if($command == "logout" && isset($_POST['authId']))
 {
-	$id = ValidateIntParam($_POST['id']);
+	$id = ValidateIntParam($_POST['authId']);
 	Logout($id);
 	echo true;
 }
 	
 
-if($command == "refresh" && isset($_POST['id']) && && isset($_POST['auth']))
+if($command == "refresh" && isset($_POST['authId']) && isset($_POST['auth']))
 {
-	$id = ValidateIntParam($_POST['id']);
+	$id = ValidateIntParam($_POST['authId']);
 	$old = substr(SanitizeString($_POST['auth']), 0, 130);
 	$new = RefreshToken($id, $old);
 	return $new;

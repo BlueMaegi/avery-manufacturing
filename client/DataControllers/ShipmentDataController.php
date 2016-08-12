@@ -9,11 +9,13 @@ $command = ValidateRequest();
 
 if($command == "get" && !isset($_POST['id']))
 {
+	ValidateToken();
 	echo ToJson(GetShipments());
 }
 
 if($command == "get" && isset($_POST['id']))
 {
+	ValidateToken();
 	$id = ValidateIntParam($_POST['id']);
 	$item = GetShipment($id);
 	
@@ -53,6 +55,7 @@ if($command == "update" && isset($_POST['shipment']))
 
 if($command == "delete" && isset($_POST['id']))
 {
+	ValidateToken();
 	$id = ValidateIntParam($_POST['id']);
 	$success = DeleteShipment($id);
 	

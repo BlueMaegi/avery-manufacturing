@@ -9,6 +9,7 @@ $command = ValidateRequest();
 
 if($command == "get" && !isset($_POST['id']))
 {
+	ValidateToken();
 	echo ToJson(GetOrders());
 }
 
@@ -52,6 +53,7 @@ if($command == "update" && isset($_POST['order']))
 
 if($command == "delete" && isset($_POST['id']))
 {
+	ValidateToken();
 	$id = ValidateIntParam($_POST['id']);
 	$success = DeleteOrder($id);
 	if($success)
