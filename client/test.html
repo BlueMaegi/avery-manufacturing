@@ -2,11 +2,34 @@
 	<head>
 		<title>Test</title>
 		<script type="text/javascript" src="JsLib/jquery-3.1.0.js"></script>
+		<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 		<script type="text/javascript">
-			$.ajax({
-			  url: "DataControllers/UserDataController.php",
+			Stripe.setPublishableKey('pk_test_rX9UFhyDZ7FlZvko24izhxf8');
+			//Stripe.setPublishableKey('pk_test_J0FvKnm3WjqOJFctUg4NFJTa'); ///DO NOT USE, THIS IS GAVANT'S
+			
+			Stripe.card.createToken({
+			  number: '4242424242424242',
+			  cvc: '123',
+			  exp_month: '03',
+			  exp_year: '2018',
+			  name: "Stannis Baratheon"
+			}, function(status, card){
+				$.ajax({
+				  url: "DataControllers/TestDataController.php",
+				  method: "POST",
+				  data:{"card":card["id"], "amount":"25.99", }
+				}).done(function(data){
+					console.log(data);
+				});
+			});
+			
+			/*$.ajax({
+			  url: "DataControllers/ShipmentDataController.php",
 			  method: "POST",
 			  data:{
+			  	//"func":"login", "name":"admin", "word":"concrete"
+			  	"func":"get", "authId":"2",
+			  	"auth":"b08a7e6fc7b91612d2fc8d947b26df147c94048d96b5256ba7b75af95c6860c07b85f22fc128b98d26864471717e2e4fbda73a4a06905843f78a8cc7222026140048e99f773"
 			  	/*"func":"update", 
 			  	"shipment":{
 			  		"id":"3",
@@ -26,11 +49,11 @@
 			  		"phone":"5181234567",
 			  		"primaryContact":"Some Person",
 			  		"lastFour":"5555"
-			  	}*/
+			  	}
 			  }
 			}).done(function(data){
 				console.log(data);
-			});
+			});*/
 		</script>
 	</head>
 	<body>

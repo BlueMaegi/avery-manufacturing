@@ -30,6 +30,19 @@ function ValidateUserRequest()
 	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
 }
 
+function ValidatePurchaseRequest()
+{
+	$restFunctions = ["address", "shipping", "card", "complete"];
+	if(isset($_POST['func']))
+	{
+		$command = strtolower(substr($_POST['func'], 0, 9));
+	 	if(in_array($command, $restFunctions))
+	 		return $command;
+	}
+	
+	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+}
+
 function ValidateIntParam($data)
 {
 	$integer = intval(substr($data,0,11));
@@ -39,12 +52,21 @@ function ValidateIntParam($data)
 	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
 }
 
+function ValidateFloatParam($data, $decimals)
+{
+	$float = round(floatval(substr($data,0,15)), $decimals);
+	if($float > 0)
+		return $float;
+		
+	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+}
+
 function ValidateToken()
 {
-	if(isset($_POST['id']) && isset($_POST['auth']))
+	if(isset($_POST['authId']) && isset($_POST['auth']))
 	{
-		$id = intval(substr($_POST['id'], 0, 11));
-		$token = SanitizeString(substr($_POST['id'], 0, 255)); //TODO: get a more exact length
+		$id = intval(substr($_POST['authId'], 0, 11));
+		$token = SanitizeString(substr($_POST['auth'], 0, 150)); 
 		if(CheckToken($id, $token))
 			return true;
 	}
