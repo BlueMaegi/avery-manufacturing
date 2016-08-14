@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetProducts()
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	$products = do_query("SELECT * FROM Products","","");
 	close_db();
 	return $products;
@@ -15,6 +15,7 @@ function GetProducts()
 
 function GetProduct($productId)
 {
+	connect_to_db();
 	$product = do_query("SELECT * FROM Products WHERE Id = ?","i", [$productId]);
 	close_db();
 	return $product;
@@ -22,6 +23,7 @@ function GetProduct($productId)
 
 function CreateProduct($product)
 {
+	connect_to_db();
 	$params[] = $product["name"];
 	$params[] = $product["description"];
 	$params[] = $product["price"];
@@ -35,6 +37,7 @@ function CreateProduct($product)
 
 function UpdateProduct($product)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Products WHERE Id = ?","i", array($product["id"]));
 	if($existing)
 	{
@@ -51,6 +54,7 @@ function UpdateProduct($product)
 
 function DeleteProduct($productId)
 {
+	connect_to_db();
 	do_query("DELETE FROM Products WHERE Id = ?","i", array($productId));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -62,6 +66,7 @@ function ValidateProduct($data)
 	{
 		$product = "";
 		$product["description"] = null;
+		$product['id'] = null;
 		
 		if(array_key_exists("id", $data))
 			$product["id"] = ValidateIntParam($data["id"]);

@@ -3,7 +3,7 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
 //-------------------------------------------------------------------------
 $DB = "";
-connect_to_db(); //automatically attempt to connect on inclusion
+//connect_to_db(); //automatically attempt to connect on inclusion
 
 
 //Attempt a global connection to the DB

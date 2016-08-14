@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetHistories($inventoryId)
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	//TODO: include other things that are useful with joins?
 	$histories = do_query("SELECT * FROM InventoryHistory WHERE InventoryId = ?","i", [$inventoryId]);
 	close_db();
@@ -16,13 +16,15 @@ function GetHistories($inventoryId)
 
 function GetInventoryHistory($historyId)
 {
+	connect_to_db();
 	$history = do_query("SELECT * FROM InventoryHistory WHERE Id = ?","i", array($historyId));
 	close_db();
 	return $history;
 }
 
 function CreateHistory($history)
-{
+{	
+	connect_to_db();
 	$params[] = $history["inventoryId"];
 	$params[] = $history["eventType"];
 	$params[] = $history["quantity"];
@@ -41,6 +43,7 @@ function CreateHistory($history)
 
 function UpdateHistory($history)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Inventory WHERE Id = ?","i", array($history["id"]));
 	if($existing)
 	{
@@ -54,6 +57,7 @@ function UpdateHistory($history)
 
 function DeleteHistory($historyId)
 {
+	connect_to_db();
 	do_query("DELETE FROM InventoryHistory WHERE Id = ?","i", array($historyId));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -64,6 +68,8 @@ function ValidateHistory($data)
 	if(is_array($data))
 	{
 		$history = "";
+		$history['id'] = null;
+		
 		if(array_key_exists("id", $data))
 			$history["id"] = ValidateIntParam($data["id"]);
 		if(array_key_exists("inventoryId", $data))

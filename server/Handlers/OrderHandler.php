@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetOrders()
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	//TODO: include other things that are useful with joins?
 	$orders = do_query("SELECT * FROM Orders","","");
 	close_db();
@@ -16,6 +16,7 @@ function GetOrders()
 
 function GetOrder($orderId)
 {
+	connect_to_db();
 	$order = do_query("SELECT * FROM Orders WHERE Id = ?","i", [$orderId]);
 	close_db();
 	return $order;
@@ -23,6 +24,7 @@ function GetOrder($orderId)
 
 function CreateOrder($order)
 {
+	connect_to_db();
 	$params[] = $order["customerId"];
 	$order = false;
 	
@@ -39,6 +41,7 @@ function CreateOrder($order)
 
 function UpdateOrder($order)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Orders WHERE Id = ?","i", array($order["id"]));
 	if($existing)
 	{
@@ -52,6 +55,7 @@ function UpdateOrder($order)
 
 function DeleteOrder($orderId)
 {
+	connect_to_db();
 	//TODO: Cascade delete to orderItems?
 	do_query("DELETE FROM Orders WHERE Id = ?","i", array($orderId));
 	close_db();
@@ -63,6 +67,8 @@ function ValidateOrder($data)
 	if(is_array($data))
 	{
 		$order = "";
+		$order['id'] = null;
+		
 		if(array_key_exists("id", $data))
 			$order["id"] = ValidateIntParam($data["id"]);
 		if(array_key_exists("customerId", $data))

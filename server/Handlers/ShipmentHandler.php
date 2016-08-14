@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetShipments()
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	$shipment = do_query("SELECT * FROM Shipments","","");
 	close_db();
 	return $shipment;
@@ -15,6 +15,7 @@ function GetShipments()
 
 function GetShipment($id)
 {
+	connect_to_db();
 	$shipment = do_query("SELECT * FROM Shipments WHERE id = ?","i", array($id));
 	close_db();
 	return $shipment;
@@ -22,6 +23,7 @@ function GetShipment($id)
 
 function CreateShipment($shipment)
 {
+	connect_to_db();
 	$params[] = $shipment["rateType"];
 	$params[] = $shipment["cost"];
 	$params[] = $shipment["status"];
@@ -44,6 +46,7 @@ function CreateShipment($shipment)
 
 function UpdateShipment($shipment)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Shipments WHERE id = ?","i", array($shipment["id"]));
 	if($existing)
 	{
@@ -62,6 +65,7 @@ function UpdateShipment($shipment)
 
 function DeleteShipment($id)
 {
+	connect_to_db();
 	do_query("DELETE FROM Shipments WHERE id = ?","i", array($id));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -72,6 +76,8 @@ function ValidateShipment($data)
 	if(is_array($data))
 	{
 		$shipment = "";
+		$shipment['id'] = null;
+		$shipment['orderId'] = null;
 		$shipment["epLabelId"] = null;
 		$shipment["epShipmentId"] = null;
 		

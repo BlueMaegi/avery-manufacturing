@@ -58,8 +58,7 @@ function ValidateToken()
 	{
 		$id = ValidateIntParam($_POST['authId']);
 		$token = SanitizeString($_POST['auth'], 150); 
-		//var_dump($token);
-		if(CheckToken($id, $token))
+		if(ExternalCheckToken($id, $token))
 			return true;
 	}
 

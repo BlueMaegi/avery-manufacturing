@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetCustomers()
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	$customers = do_query("SELECT * FROM Customers","","");
 	close_db();
 	return $customers;
@@ -15,6 +15,7 @@ function GetCustomers()
 
 function GetCustomer($customerId)
 {
+	connect_to_db();
 	$customer = do_query("SELECT * FROM Customers WHERE Id = ?","i", [$customerId]);
 	close_db();
 	return $customer;
@@ -22,6 +23,7 @@ function GetCustomer($customerId)
 
 function CreateCustomer($customer)
 {
+	connect_to_db();
 	$params[] = $customer["name"];
 	$params[] = $customer["email"];
 	$params[] = $customer["address"];
@@ -41,6 +43,7 @@ function CreateCustomer($customer)
 
 function UpdateCustomer($customer)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Customers WHERE Id = ?","i", array($customer["id"]));
 	if($existing)
 	{
@@ -64,6 +67,7 @@ function UpdateCustomer($customer)
 
 function DeleteCustomer($customerId)
 {
+	connect_to_db();
 	do_query("DELETE FROM Customers WHERE Id = ?","i", array($customerId));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -74,6 +78,8 @@ function ValidateCustomer($data)
 	if(is_array($data))
 	{
 		$customer = "";
+		$customer['id'] = null;
+		
 		if(array_key_exists("id", $data) && ValidateIntParam($data["id"]))
 			$customer["id"] = ValidateIntParam($data["id"]);
 		if(array_key_exists("name", $data))

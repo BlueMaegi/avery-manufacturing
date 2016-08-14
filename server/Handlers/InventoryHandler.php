@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetInventory($locationId)
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	$inventory = do_query("SELECT * FROM Inventory WHERE LocationId = ?","i",array($locationId));
 	close_db();
 	return $inventory;
@@ -15,6 +15,7 @@ function GetInventory($locationId)
 
 function GetInventoryItem($id)
 {
+	connect_to_db();
 	$inventory = do_query("SELECT * FROM Inventory WHERE id = ?","i", array($id));
 	close_db();
 	return $inventory;
@@ -22,6 +23,7 @@ function GetInventoryItem($id)
 
 function CreateInventoryItem($inventoryItem)
 {
+	connect_to_db();
 	$params[] = $inventoryItem["locationId"];
 	$params[] = $inventoryItem["productId"];
 	$params[] = $inventoryItem["quantity"];
@@ -42,6 +44,7 @@ function CreateInventoryItem($inventoryItem)
 
 function UpdateInventoryItem($inventoryItem)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Inventory WHERE id = ?","i", array($inventoryItem["id"]));
 	if($existing)
 	{
@@ -58,6 +61,7 @@ function UpdateInventoryItem($inventoryItem)
 
 function DeleteInventory($id)
 {
+	connect_to_db();
 	do_query("DELETE FROM Inventory WHERE id = ?","i", array($id));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -68,6 +72,8 @@ function ValidateInventoryItem($data)
 	if(is_array($data))
 	{
 		$inventory = "";
+		$inventory['id'] = null;
+		
 		if(array_key_exists("id", $data))
 			$inventory["id"] = ValidateIntParam($data["id"]);
 		if(array_key_exists("locationId", $data))

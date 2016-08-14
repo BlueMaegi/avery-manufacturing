@@ -6,6 +6,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function Login($name, $pass)
 {
+	connect_to_db();
 	$id = ValidatePassword($name, $pass);
 	$token = '';
 	if($id)
@@ -20,6 +21,7 @@ function Login($name, $pass)
 
 function Logout($id)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Clients WHERE Id = ?","i", array($id));
 	if($existing && $existing[0])
 	{
@@ -31,6 +33,7 @@ function Logout($id)
 
 function RefreshToken($id, $oldToken)
 {
+	connect_to_db();
 	$token = false;
 	if(CheckToken($id, $oldToken))
 		$token = GenerateToken($id);
@@ -39,8 +42,9 @@ function RefreshToken($id, $oldToken)
 	return $token;
 }
 
-function GenerateToken($id)
+function GenerateToken($id) //NOTE: This purposely does not manage its own db connection
 {
+	
 	$existing = do_query("SELECT * FROM Clients WHERE Id = ?","i", array($id));
 	if($existing && $existing[0])
 	{
@@ -64,6 +68,13 @@ function GenerateToken($id)
 	}
 	
 	return false;
+}
+
+function ExternalCheckToken($id, $token)
+{
+	connect_to_db();
+	CheckToken($id, $token);
+	close_db();
 }
 
 function CheckToken($id, $token)

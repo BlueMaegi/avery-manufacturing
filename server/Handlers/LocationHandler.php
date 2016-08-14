@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetLocations()
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	$locations = do_query("SELECT * FROM Locations","","");
 	close_db();
 	return $locations;
@@ -15,6 +15,7 @@ function GetLocations()
 
 function GetLocation($locationId)
 {
+	connect_to_db();
 	$location = do_query("SELECT * FROM Locations WHERE Id = ?","i", [$locationId]);
 	close_db();
 	return $location;
@@ -22,6 +23,7 @@ function GetLocation($locationId)
 
 function CreateLocation($location)
 {
+	connect_to_db();
 	$params[] = $location["name"];
 	$params[] = $location["address"];
 	$params[] = $location["city"];
@@ -40,6 +42,7 @@ function CreateLocation($location)
 
 function UpdateLocation($location)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM Locations WHERE Id = ?","i", array($location["id"]));
 	if($existing)
 	{
@@ -62,6 +65,7 @@ function UpdateLocation($location)
 
 function DeleteLocation($locationId)
 {
+	connect_to_db();
 	do_query("DELETE FROM Locations WHERE Id = ?","i", array($locationId));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -72,6 +76,7 @@ function ValidateLocation($data)
 	if(is_array($data))
 	{
 		$location = "";
+		$location['id'] = null;
 		$location["primaryContact"] = null;
 		
 		if(array_key_exists("id", $data))

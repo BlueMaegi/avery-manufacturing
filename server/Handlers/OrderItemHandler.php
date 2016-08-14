@@ -7,7 +7,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 function GetOrderItems($orderId)
 {
-	//TODO: architect this so close_db is called only once
+	connect_to_db();
 	$orders = do_query("SELECT * FROM OrderItems WHERE OrderId = ?","i",array($orderId));
 	close_db();
 	return $orders;
@@ -15,6 +15,7 @@ function GetOrderItems($orderId)
 
 function GetOrderItem($orderId, $productId)
 {
+	connect_to_db();
 	$order = do_query("SELECT * FROM OrderItems WHERE OrderId = ? And ProductId = ?","ii", array($orderId, $productId));
 	close_db();
 	return $order;
@@ -22,6 +23,7 @@ function GetOrderItem($orderId, $productId)
 
 function CreateOrderItem($orderItem)
 {
+	connect_to_db();
 	$params[] = $orderItem["orderId"];
 	$params[] = $orderItem["productId"];
 	$params[] = $orderItem["quantity"];
@@ -43,6 +45,7 @@ function CreateOrderItem($orderItem)
 
 function UpdateOrderItem($orderItem)
 {
+	connect_to_db();
 	$existing = do_query("SELECT * FROM OrderItems WHERE OrderId = ? AND ProductId = ?","ii", array($orderItem["orderId"], $orderItem["productId"]));
 	if($existing)
 	{
@@ -62,6 +65,7 @@ function UpdateOrderItem($orderItem)
 
 function DeleteOrderItem($orderId, $productId)
 {
+	connect_to_db();
 	do_query("DELETE FROM OrderItems WHERE OrderId = ? AND ProductId = ?","ii", array($orderId, $productId));
 	close_db();
 	return true; //TODO: some sort of error handling?
@@ -72,6 +76,7 @@ function ValidateOrderItem($data)
 	if(is_array($data))
 	{
 		$order = "";
+		$order["orderId"] = null;
 		$order["discount"] = null;
 		$order["shipmentId"] = null;
 		
