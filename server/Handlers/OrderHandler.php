@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Lib/db_functions.php');
 //-------------------------------------------------
 
@@ -55,6 +56,23 @@ function DeleteOrder($orderId)
 	do_query("DELETE FROM Orders WHERE Id = ?","i", array($orderId));
 	close_db();
 	return true; //TODO: some sort of error handling?
+}
+
+function ValidateOrder($data)
+{
+	if(is_array($data))
+	{
+		$order = "";
+		if(array_key_exists("id", $data))
+			$order["id"] = ValidateIntParam($data["id"]);
+		if(array_key_exists("customerId", $data))
+			$order["customerId"] = ValidateIntParam($data["customerId"]);
+				
+		if(array_key_exists("customerId", $order))
+			return $order;
+	}
+
+	return false;
 }
 
 ?>

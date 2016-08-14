@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Lib/db_functions.php');
 //-------------------------------------------------
 
@@ -64,6 +65,35 @@ function DeleteOrderItem($orderId, $productId)
 	do_query("DELETE FROM OrderItems WHERE OrderId = ? AND ProductId = ?","ii", array($orderId, $productId));
 	close_db();
 	return true; //TODO: some sort of error handling?
+}
+
+function ValidateOrderItem($data)
+{
+	if(is_array($data))
+	{
+		$order = "";
+		$order["discount"] = null;
+		$order["shipmentId"] = null;
+		
+		if(array_key_exists("orderId", $data))
+			$order["orderId"] = ValidateIntParam($data["orderId"]);
+		if(array_key_exists("productId", $data))
+			$order["productId"] = ValidateIntParam($data["productId"]);
+		if(array_key_exists("quantity", $data))
+			$order["quantity"] = ValidateIntParam($data["quantity"]);
+		if(array_key_exists("taxAmount", $data))
+			$order["taxAmount"] = ValidateFloatParam($data["taxAmount"]);
+		if(array_key_exists("discount", $data))
+			$order["discount"] = ValidateFloatParam($data["discount"]);
+		if(array_key_exists("shipmentId", $data))
+			$order["shipmentId"] = ValidateIntParam($data["shipmentId"]);
+
+		if(array_key_exists("orderId", $order) && array_key_exists("productId", $order)
+			&& array_key_exists("quantity", $order) && array_key_exists("taxAmount", $order))
+			return $order;
+	}
+
+	return false;
 }
 
 ?>

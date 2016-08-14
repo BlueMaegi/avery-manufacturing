@@ -7,14 +7,14 @@ require_once(SERVROOT.'Lib/db_functions.php');
 
 \Stripe\Stripe::setApiKey(STRIPE_KEY);
 
-function CreateCharge($card, $amount)
+function CreateCharge($token, $amount)
 {
 	$amount = intval($amount * 100);
 
 	$response = \Stripe\Charge::create(array(
 	  "amount" => $amount,
 	  "currency" => "usd",
-	  "source" => $card,
+	  "source" => $token,
 	  "description" => "",
 	  "capture" => false
 	));

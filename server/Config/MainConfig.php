@@ -13,4 +13,7 @@ define("EXPIRATION", 300);
 
 define("STRIPE_KEY", 'sk_test_TD3vu14u4eVIBbDUfQ0kKWc5');
 //define("STRIPE_KEY", 'sk_test_DwTrW0asvdfn4ujyMJcIAimy'); //DO NOT USE, THIS IS GAVANT'S
+
+const TRANSACTIONS = array('Add_Inventory' => 1, "Sale" => 2, "Return" => 3);
+
 ?>

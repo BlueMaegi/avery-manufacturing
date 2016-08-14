@@ -1,11 +1,14 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/ProductHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
 $command = ValidateRequest();
+//var_dump($command);
+//var_dump($_POST);
 
 if($command == "get" && !isset($_POST['id']))
 {
@@ -14,78 +17,61 @@ if($command == "get" && !isset($_POST['id']))
 
 if($command == "get" && isset($_POST['id']))
 {
-	$id = ValidateIntParam($_POST['id']);
+	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
 	$item = GetProduct($id);
 	
 	if($item)
 		echo ToJson($item);
 	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
+		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 }
 
 if($command == "create" && isset($_POST['product']))
 {
-	ValidateToken();
-	$item = ValidateProduct($_POST['product']);
-	if($item)
+	if(ValidateToken())
 	{
-		$newProduct = CreateProduct($item);
+		$item = ThrowInvalid(ValidateProduct($_POST['product']));
+		if($item)
+		{
+			$newProduct = CreateProduct($item);
 	
-		if($newProduct)
-			echo ToJson($newProduct);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+			if($newProduct)
+				echo ToJson($newProduct);
+			else 
+				header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		}
 	}
 }
 
 if($command == "update" && isset($_POST['product']))
 {
-	ValidateToken();
-	$item = ValidateProduct($_POST['product']);
-	if($item)
+	if(ValidateToken())
 	{
-		$success = UpdateProduct($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-	}	
+		$item = ThrowInvalid(ValidateProduct($_POST['product']));
+		if($item && isset($item['id']))
+		{
+			$success = UpdateProduct($item);
+			if($success)
+				echo $success;
+			else 
+				header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		}
+		else
+			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+	}
 }
 
 if($command == "delete" && isset($_POST['id']))
 {
-	ValidateToken();
-	$id = ValidateIntParam($_POST['id']);
-	$success = DeleteProduct($id);
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-}
-
-	
-function ValidateProduct($data)
-{
-	if(is_array($data))
+	if(ValidateToken())
 	{
-		$product = "";
-		$product["description"] = null;
-		
-		if(array_key_exists("id", $data))
-			$product["id"] = substr(intval($data["id"]), 0, 11);
-		if(array_key_exists("name", $data))
-			$product["name"] = substr(SanitizeString($data["name"]), 0, 50);
-		if(array_key_exists("description", $data))
-			$product["description"] = substr(SanitizeString($data["description"]), 0, 100);
-		if(array_key_exists("price", $data))
-			$product["price"] = floatval(substr(SanitizeString($data["price"]), 0, 15));
-				
-		if(array_key_exists("name", $product) && array_key_exists("price", $product) 
-			&& array_key_exists("description", $product))
-			return $product;
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$success = DeleteProduct($id);
+		if($success)
+			echo $success;
+		else 
+			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
 	}
-
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
 }
 
 ?>

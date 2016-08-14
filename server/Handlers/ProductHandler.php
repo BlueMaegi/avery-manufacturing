@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Lib/db_functions.php');
 //-------------------------------------------------
 
@@ -53,6 +54,30 @@ function DeleteProduct($productId)
 	do_query("DELETE FROM Products WHERE Id = ?","i", array($productId));
 	close_db();
 	return true; //TODO: some sort of error handling?
+}
+
+function ValidateProduct($data)
+{
+	if(is_array($data))
+	{
+		$product = "";
+		$product["description"] = null;
+		
+		if(array_key_exists("id", $data))
+			$product["id"] = ValidateIntParam($data["id"]);
+		if(array_key_exists("name", $data))
+			$product["name"] = SanitizeString($data["name"], 50);
+		if(array_key_exists("description", $data))
+			$product["description"] = SanitizeString($data["description"], 100);
+		if(array_key_exists("price", $data))
+			$product["price"] = ValidateFloatParam($data["price"]);
+				
+		if(array_key_exists("name", $product) && array_key_exists("price", $product) 
+			&& array_key_exists("description", $product))
+			return $product;
+	}
+
+	return false;
 }
 
 ?>

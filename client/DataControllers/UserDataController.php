@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/UserHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
@@ -9,15 +10,15 @@ $command = ValidateUserRequest();
 
 if($command == "login" && isset($_POST['name']) && isset($_POST['word']))
 {
-	$name = substr(SanitizeString($_POST['name']), 0, 50);
-	$pass = substr(SanitizeString($_POST['word']), 0, 150);
+	$name = SanitizeString($_POST['name'], 50);
+	$pass = SanitizeString($_POST['word'], 150);
 	$token = Login($name, $pass);
 	echo json_encode($token);
 }
 
 if($command == "logout" && isset($_POST['authId']))
 {
-	$id = ValidateIntParam($_POST['authId']);
+	$id = ThrowInvalid(ValidateIntParam($_POST['authId']));
 	Logout($id);
 	echo true;
 }
@@ -25,13 +26,11 @@ if($command == "logout" && isset($_POST['authId']))
 
 if($command == "refresh" && isset($_POST['authId']) && isset($_POST['auth']))
 {
-	$id = ValidateIntParam($_POST['authId']);
-	$old = substr(SanitizeString($_POST['auth']), 0, 130);
+	$id = ThrowInvalid(ValidateIntParam($_POST['authId']));
+	$old = SanitizeString($_POST['auth'], 150);
 	$new = RefreshToken($id, $old);
 	return $new;
 }		
 
-	//echo GenerateToken(2);
-	//echo CheckToken(2, '0490808e9b25409b4e67052786682909aa219f747c54a4908c9b62325a012bff27359a40c5ba3008da1efabfb1179745947751790a37f73d069cc5e83f1d783d11e1cc0d0b5');
-	//echo ValidatePassword('admin', 'concrete2');
+//echo ValidatePassword('admin', 'concrete');
 ?>

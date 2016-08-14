@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/OrderHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
@@ -15,18 +16,18 @@ if($command == "get" && !isset($_POST['id']))
 
 if($command == "get" && isset($_POST['id']))
 {
-	$id = ValidateIntParam($_POST['id']);
+	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
 	$item = GetOrder($id);
 	
 	if($item)
 		echo ToJson($item);
 	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
+		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 }
 
 if($command == "create" && isset($_POST['order']))
 {
-	$item = ValidateOrder($_POST['order']);
+	$item = ThrowInvalid(ValidateOrder($_POST['order']));
 	if($item)
 	{
 		$newOrder = CreateOrder($item);
@@ -40,44 +41,28 @@ if($command == "create" && isset($_POST['order']))
 
 if($command == "update" && isset($_POST['order']))
 {
-	$item = ValidateOrder($_POST['order']);
-	if($item)
+	$item = ThrowInvalid(ValidateOrder($_POST['order']));
+	if($item && isset($item['id']))
 	{
 		$success = UpdateOrder($item);
 		if($success)
 			echo $success;
 		else 
 			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-	}	
+	}
+	else
+		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 }
 
 if($command == "delete" && isset($_POST['id']))
 {
 	ValidateToken();
-	$id = ValidateIntParam($_POST['id']);
+	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
 	$success = DeleteOrder($id);
 	if($success)
 		echo $success;
 	else 
 		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-}
-
-	
-function ValidateOrder($data)
-{
-	if(is_array($data))
-	{
-		$order = "";
-		if(array_key_exists("id", $data))
-			$order["id"] = substr(intval($data["id"]), 0, 11);
-		if(array_key_exists("customerId", $data))
-			$order["customerId"] = substr(intval($data["customerId"]), 0, 11);
-				
-		if(array_key_exists("customerId", $order))
-			return $order;
-	}
-
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
 }
 
 ?>

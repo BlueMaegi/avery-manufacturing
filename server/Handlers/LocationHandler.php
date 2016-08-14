@@ -1,6 +1,7 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Lib/db_functions.php');
 //-------------------------------------------------
 
@@ -64,6 +65,39 @@ function DeleteLocation($locationId)
 	do_query("DELETE FROM Locations WHERE Id = ?","i", array($locationId));
 	close_db();
 	return true; //TODO: some sort of error handling?
+}
+
+function ValidateLocation($data)
+{
+	if(is_array($data))
+	{
+		$location = "";
+		$location["primaryContact"] = null;
+		
+		if(array_key_exists("id", $data))
+			$location["id"] = ValidateIntParam($data["id"]);
+		if(array_key_exists("name", $data))
+			$location["name"] = SanitizeString($data["name"], 50);
+		if(array_key_exists("address", $data))
+			$location["address"] = SanitizeString($data["address"], 50);
+		if(array_key_exists("city", $data))
+			$location["city"] = SanitizeString($data["city"], 30);
+		if(array_key_exists("state", $data))
+			$location["state"] = SanitizeString($data["state"], 3);
+		if(array_key_exists("zip", $data))
+			$location["zip"] = SanitizeString($data["zip"], 10);
+		if(array_key_exists("phone", $data))
+			$location["phone"] = SanitizeString($data["phone"], 10);
+		if(array_key_exists("primaryContact", $data))
+			$location["primaryContact"] = SanitizeString($data["primaryContact"], 50);
+				
+		if(array_key_exists("name", $location) && array_key_exists("address", $location)
+		 	&& array_key_exists("city", $location) && array_key_exists("state", $location) 
+		 	&& array_key_exists("zip", $location) && array_key_exists("phone", $location))
+			return $location;
+	}
+
+	return false;
 }
 
 ?>

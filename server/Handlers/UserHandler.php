@@ -87,8 +87,9 @@ function CheckToken($id, $token)
 		}
 
 		$difference = $now - intval($dateStr);
-		if($difference > 0 && $difference < EXPIRATION && $token == $hash)
+		if($difference >= 0 && $difference < EXPIRATION && $token == $hash)
 			return true;
+			
 	}
 	
 	return false;
