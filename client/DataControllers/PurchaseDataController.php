@@ -1,11 +1,13 @@
 <?php
 //INCLUDES-----------------------------------------
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
+require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/StripeHandler.php');
 require_once(SERVROOT.'Handlers/OrderHandler.php');
 require_once(SERVROOT.'Handlers/OrderItemHandler.php');
 require_once(SERVROOT.'Handlers/ShipmentHandler.php');
 require_once(SERVROOT.'Handlers/CustomerHandler.php');
+require_once(SERVROOT.'Handlers/ProductHandler.php');
 require_once(SERVROOT.'Handlers/InventoryHandler.php');
 require_once(SERVROOT.'Handlers/InventoryHistoryHandler.php');
 require_once('DataLib.php');
@@ -15,8 +17,8 @@ $command = ValidatePurchaseRequest();
 
 if($command == "card" && isset($_POST['id']) && isset($_POST['amount']))
 {
-	$id = substr(SanitizeString($data["id"]), 0, 35);
-	$amount = ValidateFloatParam($_POST['amount'], 2);
+	$id = SanitizeString($_POST["id"], 35);
+	$amount = ThrowInvalid(ValidateFloatParam($_POST['amount'], 2));
 	
 	$chargeId = CreateCharge($id, $amount);
 	
@@ -26,18 +28,122 @@ if($command == "card" && isset($_POST['id']) && isset($_POST['amount']))
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
 }
 
-if($command == "complete")
+if($command == "shipping")
 {
-	//1. Create Customer
-	//2. Create Order
-	//3. Create Shipment(s)
-	//4. Create Order Items
-		//4.2 Subtract from Inventory
-		//4.3 Create Inventory History
-	//5. Capture Card Charge
-	//6. Purchase EP Label
-		//6.2 Trigger Label download
-	//7. Send Receipt Email
+
+}
+
+if($command == "complete" && isset($_POST['purchase']))
+{
+	$purchase = ValidatePurchase($_POST['purchase']);
+	if($purchase && ValidatePurchaseProducts($purchase['orderItems']))
+	{
+		$customer = CreateCustomer($purchase['customer'])[0];
+		$order['customerId'] = $customer['id'];
+		$order = CreateOrder($order)[0];
+			
+		foreach($purchase['orderItems'] as $item)
+		{
+			$item['orderId'] = $order['id'];
+			$inventoryList = GetInventoryByProduct($item['productId']);
+			$currIdx = 0;
+			$remainingQty = $item['quantity'];
+			
+			while($remainingQty > 0)
+			{
+				$inventory = $inventoryList[$currIdx];
+				if($inventory['quantity'] > 0)
+				{
+					$toSubtract = min($inventory['quantity'], $remainingQty);
+					$inventory['quantity'] -= $toSubtract;
+					$inventory['locationId'] = $inventory['locationid'];//quick hack
+					$inventory['productId'] = $inventory['productid'];
+					UpdateInventoryItem($inventory);
+					$remainingQty -= $toSubtract;
+					
+					$history['inventoryId'] = $inventory['id'];
+					$history['quantity'] = $toSubtract;
+					$history['eventType'] = TRANSACTIONS['Sale'];
+					$hist = CreateHistory($history);
+				}
+				else
+					$currIdx ++;
+			}
+			
+			$newItem = CreateOrderItem($item);
+		}
+		
+		CaptureCharge($purchase['chargeId']);
+		
+		$purchase['shipment']['orderId'] = $order['id'];
+		$shipment = CreateShipment($purchase['shipment'])[0];
+		//TODO: Purchase and download label
+			
+		//TODO: send receipt email	
+		echo true;	
+	}
+	else
+		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+}
+
+function ValidatePurchase($data)
+{
+	if(is_array($data))
+	{
+		$purchase = "";
+		if(array_key_exists("customer", $data))
+		{
+			$customer = ValidateCustomer($data['customer']);
+			if($customer)
+				$purchase['customer'] = $customer;
+		}
+		
+		if(array_key_exists("shipment", $data))
+		{
+			$shipment = ValidateShipment($data['shipment']);
+			if($shipment)
+				$purchase['shipment'] = $shipment;
+		}
+		
+		if(array_key_exists("chargeId", $data) && SanitizeString($data['chargeId'], 50))
+		{
+			$purchase['chargeId'] = SanitizeString($data['chargeId'], 50);
+		}
+		
+		if(array_key_exists("orderItems", $data) && is_array($data['orderItems']))
+		{
+			$cleanItems = [];
+			foreach($data['orderItems'] as $item)
+			{
+				$clean = ValidateOrderItem($item);
+				if($clean)
+					$cleanItems[] = $clean;
+			}
+			
+			if(count($cleanItems) > 0)
+				$purchase['orderItems'] = $cleanItems;
+		}
+				
+		if(array_key_exists("customer", $purchase) && array_key_exists("shipment", $purchase) 
+			&& array_key_exists("chargeId", $purchase) && array_key_exists("orderItems", $purchase))
+			return $purchase;
+	}
+
+	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+}
+
+function ValidatePurchaseProducts($items)
+{
+	foreach($items as $i)
+	{
+		if(!CheckProductExists($i['productId']))
+			return false;
+			
+		if(!CheckInventoryExists($i['productId'], $i['quantity']))
+			return false;
+	}
+	
+	return true;
 }
 
 /*
@@ -58,7 +164,7 @@ if($command == "complete")
 		"status":"", ??
 		"EP-rateId":""
 	},
-	"card":{"token":"", "amount":""},
+	"chargeId":"",
 	"orderItems":[
 		{"productId":"","quantity":"","taxAmount":"","discount":""},
 		{"productId":"","quantity":"","taxAmount":"","discount":""},

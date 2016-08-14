@@ -11,7 +11,7 @@ function CreateCharge($token, $amount)
 {
 	$amount = intval($amount * 100);
 
-	$response = \Stripe\Charge::create(array(
+	/*$response = \Stripe\Charge::create(array(
 	  "amount" => $amount,
 	  "currency" => "usd",
 	  "source" => $token,
@@ -19,13 +19,15 @@ function CreateCharge($token, $amount)
 	  "capture" => false
 	));
 	
-	return $response['id']; //TODO: catch errors
+	return $response['id']; //TODO: catch errors*/
+	
+	return "ch_FAKE_CHARGE";
 }
 
 function CaptureCharge($id)
 {
-	$charge = \Stripe\Charge::retrieve($id);
-	$charge->capture();
+	//$charge = \Stripe\Charge::retrieve($id);
+	//$charge->capture();
 	//TODO: more catch errors
 }
 

@@ -58,9 +58,9 @@ $DB = "";
 		{
 			while ($field = $meta->fetch_field())
 			{
-				$var = $field->name; 
+				$var = strtolower($field->name); 
             	$$var = null; 
-            	$parameters[$field->name] = &$$var; 
+            	$parameters[strtolower($field->name)] = &$$var; 
 			}
 			call_user_func_array(array($stmt, 'bind_result'), $parameters);
 		

@@ -60,6 +60,16 @@ function DeleteProduct($productId)
 	return true; //TODO: some sort of error handling?
 }
 
+function CheckProductExists($id)
+{
+	connect_to_db();
+	$existing = do_query("SELECT * FROM Products WHERE Id = ?","i", array($id));
+	close_db();
+	if($existing)
+		return true;
+	return false;
+}
+
 function ValidateProduct($data)
 {
 	if(is_array($data))

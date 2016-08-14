@@ -27,9 +27,10 @@
 		var currObjId = 0;
 		var currToken = "";	
 		var currAuthId = 2;
-		Ajax("User", {"func":"login", "name":"admin", "word":"concrete"}, SetToken);
+		//Ajax("User", {"func":"login", "name":"admin", "word":"concrete"}, SetToken);
 		//Ajax("User", {"func":"logout", "id":currAuthId});	
 
+		TestPurchases();	
 			
 		function TestProducts()
 		{
@@ -285,6 +286,44 @@
 			Ajax("Shipment",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
 		}
 		
+		function TestPurchases()
+		{
+			/*Stripe.card.createToken({
+			  number: '4242424242424242',
+			  cvc: '123',
+			  exp_month: '03',
+			  exp_year: '2018',
+			  name: "Stannis Baratheon"
+			}, function(status, card){
+				console.log(card);
+				Ajax("Purchase", {"func":"card","id":card["id"], "amount":"25.99"}, PrintOutput);
+			});*/
+			
+			Ajax("Purchase", {"func":"complete", "purchase":{
+				"customer":{
+					"name":"Davos Seaworth",
+					"address":"West Tower Room 6",
+					"email":"davos@stormsend.com",
+					"city":"Dragonstone",
+					"state":"SL",
+					"zip":"BB123",
+					"phone":"1234567890",
+					"lastFour":"4444"
+				},
+				"shipment":{
+					"rateType":"Standard",
+					"cost":"3.55",
+					"status":"0",
+					"EP-rateId":"r_Fake_Rate_"
+				},
+				"chargeId":"ch_FAKE_CHARGE",
+				"orderItems":[
+					{"productId":"12","quantity":"1","taxAmount":"3.5","discount":"0"},
+					{"productId":"16","quantity":"3","taxAmount":"6.0","discount":"0"}
+				]}
+			}, PrintOutput);
+		}
+		
 		function Ajax(object, dataSet, callback)
 		{
 			$.ajax({
@@ -307,7 +346,7 @@
 			currAuthId = data[0];
 			currToken = data[1];
 			
-			//TestShipments();
+			//TestPurchases();
 		}
 		
 		function PrintOutput(data)

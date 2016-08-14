@@ -13,6 +13,14 @@ function GetInventory($locationId)
 	return $inventory;
 }
 
+function GetInventoryByProduct($productId)
+{
+	connect_to_db();
+	$inventory = do_query("SELECT * FROM Inventory WHERE ProductId = ?","i",array($productId));
+	close_db();
+	return $inventory;
+}
+
 function GetInventoryItem($id)
 {
 	connect_to_db();
@@ -65,6 +73,24 @@ function DeleteInventory($id)
 	do_query("DELETE FROM Inventory WHERE id = ?","i", array($id));
 	close_db();
 	return true; //TODO: some sort of error handling?
+}
+
+function CheckInventoryExists($productId, $quantity)
+{
+	connect_to_db();
+	$existing = do_query("SELECT * FROM Inventory WHERE ProductId = ?","i", array($productId));
+	if($existing)
+	{
+		$total = 0;
+		foreach($existing as $i)
+			$total += $i['quantity'];
+			
+		if($total >= $quantity)
+			return true;
+	}
+	
+	close_db();
+	return false;
 }
 
 function ValidateInventoryItem($data)
