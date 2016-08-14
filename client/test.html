@@ -7,7 +7,7 @@
 			Stripe.setPublishableKey('pk_test_rX9UFhyDZ7FlZvko24izhxf8');
 			//Stripe.setPublishableKey('pk_test_J0FvKnm3WjqOJFctUg4NFJTa'); ///DO NOT USE, THIS IS GAVANT'S
 			
-			Stripe.card.createToken({
+			/*Stripe.card.createToken({
 			  number: '4242424242424242',
 			  cvc: '123',
 			  exp_month: '03',
@@ -21,39 +21,300 @@
 				}).done(function(data){
 					console.log(data);
 				});
-			});
-			
-			/*$.ajax({
-			  url: "DataControllers/ShipmentDataController.php",
-			  method: "POST",
-			  data:{
-			  	//"func":"login", "name":"admin", "word":"concrete"
-			  	"func":"get", "authId":"2",
-			  	"auth":"b08a7e6fc7b91612d2fc8d947b26df147c94048d96b5256ba7b75af95c6860c07b85f22fc128b98d26864471717e2e4fbda73a4a06905843f78a8cc7222026140048e99f773"
-			  	/*"func":"update", 
-			  	"shipment":{
-			  		"id":"3",
-			  		"orderId":"3", 
-			  		"rateType":"FirstClass", 
-			  		"status":"0",
-			  		"cost":"5.35"}*/
-			  	//"func":"delete", "orderId":"1", "productId":"9"
-			  	//"func":"delete","id":"2"
-			  	/*"func":"update",
-			  	"location":{"id":"2",
-			  		"name":"Brice Canyon", 
-			  		"address":"Test",
-			  		"city":"Blah",
-			  		"state":"UT",
-			  		"zip":"44444",
-			  		"phone":"5181234567",
-			  		"primaryContact":"Some Person",
-			  		"lastFour":"5555"
-			  	}
-			  }
-			}).done(function(data){
-				console.log(data);
 			});*/
+	
+			
+		var currObjId = 0;
+		var currToken = "";	
+		var currAuthId = 2;
+		Ajax("User", {"func":"login", "name":"admin", "word":"concrete"}, SetToken);
+		//Ajax("User", {"func":"logout", "id":currAuthId});	
+
+			
+		function TestProducts()
+		{
+			Ajax("Product",{"func":"get"}, PrintOutput);
+			Ajax("Product",{"func":"not-a-func"}, PrintOutput);
+			Ajax("Product",{"func":"get", "id":"6"}, PrintOutput);
+			Ajax("Product",{"func":"get", "id":"46"}, PrintOutput);
+			Ajax("Product",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"product":{	
+					"name":"TestName", 
+					"description":"TestDescription", 
+					"price":"88.99"}}, PrintOutput);
+			Ajax("Product",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"product":{
+					"name":"TestName", 
+					"description":"TestDescription"}}, PrintOutput);
+			Ajax("Product",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"product":{
+					"id":"17",
+					"name":"UpdatedName", 
+					"description":"TestDescription", 
+					"price":"88.95"}}, PrintOutput);
+			Ajax("Product",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"product":{
+					"name":"UpdatedName", 
+					"description":"TestDescription", 
+					"price":"88.99"}}, PrintOutput);
+			Ajax("Product",{"func":"delete", "id":"15", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Product",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestCustomers()
+		{
+			Ajax("Customer",{"func":"get"}, PrintOutput);
+			Ajax("Customer",{"func":"not-a-func"}, PrintOutput);
+			Ajax("Customer",{"func":"get", "id":"2"}, PrintOutput);
+			Ajax("Customer",{"func":"get", "id":"46"}, PrintOutput);
+			Ajax("Customer",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"customer":{	
+					"name":"Missandei", 
+					"email":"wiseone@naath.com", 
+					"address":"25th Pebble Tree",
+					"city":"Vaes Dothrak",
+					"state":"ES",
+					"zip":"12345",
+					"phone":"7778889999",
+					"lastFour":"3333"}}, PrintOutput);
+			Ajax("Customer",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"customer":{
+					"name":"TestName", 
+					"email":"wrong@bad.com"}}, PrintOutput);
+			Ajax("Customer",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"customer":{	
+					"id":"4",
+					"name":"Missandei", 
+					"email":"wiseone@naath.com", 
+					"address":"25th Pebble Tree",
+					"city":"Vaes Dothrak",
+					"state":"ESS",
+					"zip":"00800",
+					"phone":"7778889999",
+					"lastFour":"3333"}}, PrintOutput);
+			Ajax("Customer",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"customer":{
+					"name":"UpdatedName", 
+					"email":"blah@blah.com", 
+					"address":"67 Some Road"}}, PrintOutput);
+			Ajax("Customer",{"func":"delete", "id":"5", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Customer",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestInventory()
+		{
+			Ajax("Inventory",{"func":"get", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Inventory",{"func":"not-a-func", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Inventory",{"func":"get", "id":"4", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Inventory",{"func":"get", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Inventory",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"inventory":{	
+					"productId":"16", 
+					"locationId":"1", 
+					"quantity":"23"}}, PrintOutput);
+			Ajax("Inventory",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"inventory":{
+					"locationId":"1", 
+					"quantity":"5"}}, PrintOutput);
+			Ajax("Inventory",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"inventory":{	
+					"id":"1",
+					"productId":"11", 
+					"locationId":"1", 
+					"quantity":"2"}}, PrintOutput);
+			Ajax("Inventory",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"inventory":{
+					"productId":"9", 
+					"locationId":"1", 
+					"quantity":"82"}}, PrintOutput);
+			Ajax("Inventory",{"func":"delete", "id":"6", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Inventory",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestInventoryHistory()
+		{
+			Ajax("InventoryHistory",{"func":"get", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("InventoryHistory",{"func":"get", "inventoryId":"5", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("InventoryHistory",{"func":"get", "id":"8", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("InventoryHistory",{"func":"get", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("InventoryHistory",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"inventoryHistory":{	
+					"inventoryId":"4", 
+					"eventType":"1", 
+					"quantity":"3"}}, PrintOutput);
+			Ajax("InventoryHistory",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"inventoryHistory":{
+					"inventoryId":"1", 
+					"quantity":"5",
+					"eventType":"8"}}, PrintOutput);
+			Ajax("InventoryHistory",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"inventoryHistory":{	
+					"id":"1",
+					"inventoryId":"3", 
+					"eventType":"1", 
+					"quantity":"2"}}, PrintOutput);
+			Ajax("inventoryHistory",{"func":"delete", "id":"6", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("inventoryHistory",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestLocations()
+		{
+			Ajax("Location",{"func":"get", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Location",{"func":"not-a-func", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Location",{"func":"get", "id":"1", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Location",{"func":"get", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Location",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"location":{	
+					"name":"Syracuse", 
+					"primaryContact":"another@westeros.com", 
+					"address":"65th Pebble Tree",
+					"city":"Syracuse",
+					"state":"NY",
+					"zip":"12510",
+					"phone":"7778889999"}}, PrintOutput);
+			Ajax("Location",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"location":{
+					"name":"TestName", 
+					"primaryContact":"wrong@bad.com"}}, PrintOutput);
+			Ajax("Location",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"location":{	
+					"id":"3",
+					"name":"Syracuse", 
+					"primaryContact":"another@westeros.com", 
+					"address":"65th Pebble Tree",
+					"city":"Syracuse",
+					"state":"NY",
+					"zip":"12510",
+					"phone":"123456789"}}, PrintOutput);
+			Ajax("Location",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"location":{
+					"name":"UpdatedName", 
+					"primaryContact":"blah@blah.com", 
+					"address":"67 Some Road"}}, PrintOutput);
+			Ajax("Location",{"func":"delete", "id":"4", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Location",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestOrders()
+		{
+			Ajax("Order",{"func":"get", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Order",{"func":"not-a-func", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Order",{"func":"get", "id":"2", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Order",{"func":"get", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Order",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"order":{"customerId":"4"}}, PrintOutput);
+			Ajax("Order",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"order":{"customerId":"46"}}, PrintOutput);
+			Ajax("Order",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"order":{"id":"2","customerId":"5"}}, PrintOutput);
+			Ajax("Order",{"func":"delete", "id":"5", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Order",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestOrderItems()
+		{
+			Ajax("OrderItem",{"func":"not-a-func", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("OrderItem",{"func":"get", "orderId":"2", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("OrderItem",{"func":"get", "orderId":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("OrderItem",{"func":"get", "orderId":"1", "productId":"9", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("OrderItem",{"func":"get", "orderId":"1", "productId":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("OrderItem",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"orderItem":{	
+					"orderId":"3", 
+					"productId":"3",
+					"quantity":"1",
+					"taxAmount":"5.2", 
+					"discount":"0"}}, PrintOutput);
+			Ajax("OrderItem",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"orderItem":{
+					"orderId":"13", 
+					"productId":"13",
+					"quantity":"2",
+					"taxAmount":"5.2", 
+					"discount":"0"}}, PrintOutput);
+			Ajax("OrderItem",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"orderItem":{
+					"orderId":"3", 
+					"productId":"13",
+					"quantity":"3",
+					"taxAmount":"8.7", 
+					"discount":"0"}}, PrintOutput);
+			Ajax("OrderItem",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"orderItem":{
+					"orderId":"13", 
+					"productId":"13",
+					"quantity":"2",
+					"taxAmount":"5.2", 
+					"discount":"0"}}, PrintOutput);
+			Ajax("OrderItem",{"func":"delete", "orderId":"3", "productId":"3", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("OrderItem",{"func":"delete", "orderId":"46", "productId":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function TestShipments()
+		{
+			Ajax("Shipment",{"func":"get", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Shipment",{"func":"not-a-func", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Shipment",{"func":"get", "id":"3", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Shipment",{"func":"get", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Shipment",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"shipment":{	
+					"orderId":"2", 
+					"status":"0", 
+					"cost":"18.99",
+					"rateType":"Priority"}}, PrintOutput);
+			Ajax("Shipment",{"func":"create", "authId":currAuthId, "auth":currToken,
+				"shipment":{
+					"orderId":"12", 
+					"status":"0", 
+					"cost":"8.99",
+					"rateType":"Nope"}}, PrintOutput);
+			Ajax("Shipment",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"shipment":{
+					"id":"1",
+					"orderId":"1", 
+					"status":"1", 
+					"cost":"25.99",
+					"rateType":"Overnight"}}, PrintOutput);
+			Ajax("Shipment",{"func":"update", "authId":currAuthId, "auth":currToken,
+				"shipment":{
+					"orderId":"1", 
+					"status":"1", 
+					"cost":"25.99",
+					"rateType":"Overnight"}}, PrintOutput);
+			Ajax("Shipment",{"func":"delete", "id":"5", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			Ajax("Shipment",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+		}
+		
+		function Ajax(object, dataSet, callback)
+		{
+			$.ajax({
+			  url: "DataControllers/"+object+"DataController.php",
+			  method: "POST",
+			  data: dataSet
+			}).done(function(data){
+				callback(data);
+			});
+		}
+		
+		function SetCurrentId(data)
+		{
+			console.log(data);
+		}	
+		
+		function SetToken(data)
+		{
+			data = JSON.parse(data);
+			currAuthId = data[0];
+			currToken = data[1];
+			
+			//TestShipments();
+		}
+		
+		function PrintOutput(data)
+		{
+			console.log(data);
+		}
+		
 		</script>
 	</head>
 	<body>
