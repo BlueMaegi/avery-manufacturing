@@ -31,9 +31,10 @@ function CreateLocation($location)
 	$params[] = $location["zip"];
 	$params[] = $location["phone"];
 	$params[] = $location["primaryContact"];
+	$params[] = $location["epAddressId"];
 	
-	$id = do_query("INSERT INTO Locations (Name, Address, City, State, Zip, Phone, PrimaryContact)
-	 	VALUES(?, ?, ?, ?, ?, ?, ?)", "sssssss", $params);
+	$id = do_query("INSERT INTO Locations (Name, Address, City, State, Zip, Phone, PrimaryContact, EpAddressId)
+	 	VALUES(?, ?, ?, ?, ?, ?, ?, ?)", "ssssssss", $params);
 	$location = do_query("SELECT * FROM Locations WHERE Id = ?","i", array($id));
 	
 	return $location;
@@ -53,10 +54,11 @@ function UpdateLocation($location)
 		$params[] = $location["zip"];
 		$params[] = $location["phone"];
 		$params[] = $location["primaryContact"];
+		$params[] = $location["epAddressId"];
 		$params[] = $location["id"];	
 		
 		do_query("UPDATE Locations SET Name = ?, Address = ?, City = ?, State = ?, Zip = ?,
-			Phone = ?, PrimaryContact = ? WHERE Id = ?","sssssssi", $params);
+			Phone = ?, PrimaryContact = ?, EpAddressId = ? WHERE Id = ?","ssssssssi", $params);
 	}
 	close_db();
 	
@@ -78,6 +80,7 @@ function ValidateLocation($data)
 		$location = "";
 		$location['id'] = null;
 		$location["primaryContact"] = null;
+		$location["epAddressId"] = null;
 		
 		if(array_key_exists("id", $data))
 			$location["id"] = ValidateIntParam($data["id"]);
@@ -95,6 +98,8 @@ function ValidateLocation($data)
 			$location["phone"] = SanitizeString($data["phone"], 10);
 		if(array_key_exists("primaryContact", $data))
 			$location["primaryContact"] = SanitizeString($data["primaryContact"], 50);
+		if(array_key_exists("epAddressId", $data))
+			$location["epAddressId"] = SanitizeString($data["epAddressId"], 100);
 				
 		if(array_key_exists("name", $location) && array_key_exists("address", $location)
 		 	&& array_key_exists("city", $location) && array_key_exists("state", $location) 

@@ -27,8 +27,9 @@ function CreateProduct($product)
 	$params[] = $product["name"];
 	$params[] = $product["description"];
 	$params[] = $product["price"];
+	$params[] = $product["epParcelId"];
 	
-	$id = do_query("INSERT INTO Products (Name, Description, Price) VALUES(?, ?, ?)", "sss", $params);
+	$id = do_query("INSERT INTO Products (Name, Description, Price, EpParcelId) VALUES(?, ?, ?, ?)", "ssss", $params);
 	$product = do_query("SELECT * FROM Products WHERE Id = ?","i", array($id));
 
 	return $product;
@@ -44,8 +45,10 @@ function UpdateProduct($product)
 		$params[] = $product["name"];
 		$params[] = $product["description"];
 		$params[] = $product["price"];
+		$params[] = $product["epParcelId"];
 		$params[] = $product["id"];	
-		do_query("UPDATE Products SET Name = ?, Description = ?, Price = ? WHERE Id = ?","sssi", $params);
+		
+		do_query("UPDATE Products SET Name = ?, Description = ?, Price = ?, EpParcelId = ? WHERE Id = ?","ssssi", $params);
 	}
 	close_db();
 	
@@ -76,6 +79,7 @@ function ValidateProduct($data)
 	{
 		$product = "";
 		$product["description"] = null;
+		$product["epParcelId"] = null;
 		$product['id'] = null;
 		
 		if(array_key_exists("id", $data))
@@ -86,6 +90,8 @@ function ValidateProduct($data)
 			$product["description"] = SanitizeString($data["description"], 100);
 		if(array_key_exists("price", $data))
 			$product["price"] = ValidateFloatParam($data["price"]);
+		if(array_key_exists("epParcelId", $data))
+			$product["epParcelId"] = SanitizeString($data["epParcelId"], 100);
 				
 		if(array_key_exists("name", $product) && array_key_exists("price", $product) 
 			&& array_key_exists("description", $product))

@@ -3,12 +3,11 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
 require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/ProductHandler.php');
+require_once(SERVROOT.'Handlers/EasyPostHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
 $command = ValidateRequest();
-//var_dump($command);
-//var_dump($_POST);
 
 if($command == "get" && !isset($_POST['id']))
 {
@@ -40,6 +39,20 @@ if($command == "create" && isset($_POST['product']))
 			else 
 				header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
 		}
+	}
+}
+
+if($command == "create" && isset($_POST['parcel']))
+{
+	$parcel = ThrowInvalid(ValidateParcel($_POST['parcel']));
+	if($parcel)
+	{
+		$epParcel = CreateParcel($parcel);
+		
+		if($epParcel)
+			echo $epParcel['id'];
+		else 
+			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
 	}
 }
 

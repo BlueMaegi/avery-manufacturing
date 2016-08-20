@@ -32,9 +32,10 @@ function CreateCustomer($customer)
 	$params[] = $customer["zip"];
 	$params[] = $customer["lastFour"];
 	$params[] = $customer["phone"];
+	$params[] = $customer["EpAddressId"];
 	
-	$id = do_query("INSERT INTO Customers (Name, Email, Address, City, State, Zip, LastFour, Phone, DateCreated)
-	 VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW())", "ssssssii", $params);
+	$id = do_query("INSERT INTO Customers (Name, Email, Address, City, State, Zip, LastFour, Phone, EpAddressId, DateCreated)
+	 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", "sssssisss", $params);
 	$customer = do_query("SELECT * FROM Customers WHERE Id = ?","i", array($id));
 
 	return $customer;
@@ -55,10 +56,11 @@ function UpdateCustomer($customer)
 		$params[] = $customer["zip"];
 		$params[] = $customer["lastFour"];
 		$params[] = $customer["phone"];
-		$params[] = $customer["id"];	
+		$params[] = $customer["EpAddressId"];
+	  	$params[] = $customer["id"];	
 		
 		do_query("UPDATE Customers SET Name = ?, Email = ?, Address = ?, City = ?, State = ?,
-		Zip = ?, LastFour = ?, Phone = ? WHERE Id = ?","ssssssisi", $params);
+		Zip = ?, LastFour = ?, Phone = ?, EpAddressId = ? WHERE Id = ?","ssssssissi", $params);
 	}
 	close_db();
 	
@@ -78,7 +80,8 @@ function ValidateCustomer($data)
 	if(is_array($data))
 	{
 		$customer = "";
-		$customer['id'] = null;
+		$customer["id"] = null;
+		$customer["epAddressId"] = null;
 		
 		if(array_key_exists("id", $data) && ValidateIntParam($data["id"]))
 			$customer["id"] = ValidateIntParam($data["id"]);
@@ -98,6 +101,8 @@ function ValidateCustomer($data)
 			$customer["lastFour"] = ValidateIntParam($data["lastFour"], 4);
 		if(array_key_exists("phone", $data))
 			$customer["phone"] = SanitizeString($data["phone"], 10);
+		if(array_key_exists("epAddressId", $data))
+			$customer["epAddressId"] = SanitizeString($data["epAddressId"], 100);
 				
 		if(array_key_exists("name", $customer) && array_key_exists("email", $customer) 
 			&& array_key_exists("address", $customer) && array_key_exists("city", $customer)

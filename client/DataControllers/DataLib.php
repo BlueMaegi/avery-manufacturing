@@ -33,7 +33,7 @@ function ValidateUserRequest()
 
 function ValidatePurchaseRequest()
 {
-	$restFunctions = ["shipping", "card", "complete"];
+	$restFunctions = ["shipping", "rates", "card", "complete"];
 	if(isset($_POST['func']))
 	{
 		$command = strtolower(substr($_POST['func'], 0, 9));

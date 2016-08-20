@@ -3,6 +3,7 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/../server/Config/MainConfig.php');
 require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/StripeHandler.php');
+require_once(SERVROOT.'Handlers/EasyPostHandler.php');
 require_once(SERVROOT.'Handlers/OrderHandler.php');
 require_once(SERVROOT.'Handlers/OrderItemHandler.php');
 require_once(SERVROOT.'Handlers/ShipmentHandler.php');
@@ -28,9 +29,31 @@ if($command == "card" && isset($_POST['id']) && isset($_POST['amount']))
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
 }
 
-if($command == "shipping")
+if($command == "shipping" && isset($_POST['address']))
 {
+	$address = ValidateAddress($_POST['address']);
+	if($address)
+	{
+		$epAddress = VerifyAddress($address);
+		if(isset($epAddress['object']))
+			echo json_encode($epAddress['id']);
+		else
+			header($_SERVER["SERVER_PROTOCOL"]." 400 ".$epAddress[0]['message'], true, 400);
+	}
+}
 
+if($command == "rates" && isset($_POST['addressId']) && isset($_POST['productId']))
+{
+	$addressId = SanitizeString($_POST["addressId"], 50);
+	$productId = ThrowInvalid(ValidateIntParam($_POST['productId']));
+	
+	if($addressId && $productId)
+	{
+		$rates = GetShipmentRates($addressId, $productId, 1); //HARD CODED LOCATION HERE
+		echo json_encode($rates);
+	}
+	else
+		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
 }
 
 if($command == "complete" && isset($_POST['purchase']))
@@ -77,7 +100,8 @@ if($command == "complete" && isset($_POST['purchase']))
 		
 		$purchase['shipment']['orderId'] = $order['id'];
 		$shipment = CreateShipment($purchase['shipment'])[0];
-		//TODO: Purchase and download label
+		$label = PurchaseLabel($shipment['eplabelid'], $shipment['epshipmentid']);
+		SaveLabelImage($shipment['id'], $label);
 			
 		//TODO: send receipt email	
 		echo true;	

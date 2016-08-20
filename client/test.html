@@ -60,6 +60,14 @@
 					"price":"88.99"}}, PrintOutput);
 			Ajax("Product",{"func":"delete", "id":"15", "authId":currAuthId, "auth":currToken}, PrintOutput);
 			Ajax("Product",{"func":"delete", "id":"46", "authId":currAuthId, "auth":currToken}, PrintOutput);
+			
+			
+			Ajax("Product", {"func":"create", 
+				"parcel":{
+					"height":"15.0",
+					"width":"5.0",
+					"length":"5.0",
+					"weight":"36"}}, PrintOutput);
 		}
 		
 		function TestCustomers()
@@ -299,7 +307,7 @@
 				Ajax("Purchase", {"func":"card","id":card["id"], "amount":"25.99"}, PrintOutput);
 			});*/
 			
-			Ajax("Purchase", {"func":"complete", "purchase":{
+			/*Ajax("Purchase", {"func":"complete", "purchase":{
 				"customer":{
 					"name":"Davos Seaworth",
 					"address":"West Tower Room 6",
@@ -314,14 +322,28 @@
 					"rateType":"Standard",
 					"cost":"3.55",
 					"status":"0",
-					"EP-rateId":"r_Fake_Rate_"
+					"epLabelId":"r_Fake_Rate_",
+					"epShipmentId":"sh_shipment"
 				},
 				"chargeId":"ch_FAKE_CHARGE",
 				"orderItems":[
 					{"productId":"12","quantity":"1","taxAmount":"3.5","discount":"0"},
 					{"productId":"16","quantity":"3","taxAmount":"6.0","discount":"0"}
 				]}
-			}, PrintOutput);
+			}, PrintOutput);*/
+			
+			/*Ajax("Purchase", {"func":"shipping", "address":{
+				"street1":"144 West Commercial St.",
+				"city":"East Rochester",
+				"state":"NY",
+				"zip":"14445",
+				"name":"Nathan Efrat",
+				"phone":"518-123-4567"
+				//"name":"name"  	
+			}}, function(address){
+				console.log(address);*/
+				Ajax("Purchase", {"func":"rates", "addressId":"adr_9167f41387c848758c625cb03140724c", "productId":"1"}, PrintOutput);
+			//});
 		}
 		
 		function Ajax(object, dataSet, callback)
