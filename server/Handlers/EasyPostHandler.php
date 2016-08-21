@@ -44,7 +44,8 @@ function GetShipmentRates($addressId, $productId, $locationId)
 	$shipment = \EasyPost\Shipment::create(array(
 	  "to_address" => $toAddress,
 	  "from_address" => $originAddress,
-	  "parcel" => $parcel
+	  "parcel" => $parcel,
+	  "options" => array("label_format" => "PDF")
 	));
 	
 	if(isset($shipment['rates']) && count($shipment['rates']) > 0)
@@ -81,7 +82,10 @@ function CreateParcel($parcel)
 function PurchaseLabel($rateId, $shipmentId)
 {
 	$shipment = \EasyPost\Shipment::retrieve($shipmentId);
-	$label = $shipment->buy($rateId)['postage_label']['label_pdf_url'];
+	
+	$thing = $shipment->buy(array('rate'=>array('id'=>$rateId)));
+	$label = $thing->postage_label->label_url;
+
 	return $label;
 }
 
@@ -145,7 +149,7 @@ function ValidateParcel($data)
 
 function SaveLabelImage($shipmentId, $url)
 {
-
+	file_put_contents(SERVROOT.'Labels/'.$shipmentId.'.pdf', fopen($url, 'r'));
 }
 
 ?>
