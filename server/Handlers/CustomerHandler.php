@@ -32,7 +32,7 @@ function CreateCustomer($customer)
 	$params[] = $customer["zip"];
 	$params[] = $customer["lastFour"];
 	$params[] = $customer["phone"];
-	$params[] = $customer["EpAddressId"];
+	$params[] = $customer["epAddressId"];
 	
 	$id = do_query("INSERT INTO Customers (Name, Email, Address, City, State, Zip, LastFour, Phone, EpAddressId, DateCreated)
 	 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", "sssssisss", $params);

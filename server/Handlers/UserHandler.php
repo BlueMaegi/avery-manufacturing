@@ -50,7 +50,7 @@ function GenerateToken($id) //NOTE: This purposely does not manage its own db co
 	{
 		$now = time();
 		$random = hash('crc32', $now.$id);
-		$hash = hash('sha512', $existing[0]['Id'].$existing[0]['Name'].$random);
+		$hash = hash('sha512', $existing[0]['id'].$existing[0]['name'].$random);
 		$skip = rand(3, 9);
 
 		$token = substr_replace($hash, strval($skip), IDX, 0);
@@ -73,7 +73,7 @@ function GenerateToken($id) //NOTE: This purposely does not manage its own db co
 function ExternalCheckToken($id, $token)
 {
 	connect_to_db();
-	CheckToken($id, $token);
+	return CheckToken($id, $token);
 	close_db();
 }
 
@@ -82,7 +82,7 @@ function CheckToken($id, $token)
 	$existing = do_query("SELECT * FROM Clients WHERE Id = ?","i", array($id));
 	if($existing && $existing[0])
 	{
-		$hash = hash('sha512', $existing[0]['Id'].$existing[0]['Name'].$existing[0]['Token']);
+		$hash = hash('sha512', $existing[0]['id'].$existing[0]['name'].$existing[0]['token']);
 		$now = time();
 		
 		$skip = substr($token, IDX, 1);
@@ -112,8 +112,8 @@ function ValidatePassword($name, $pass)
 	if($existing && $existing[0])
 	{
 		$hash = hash('sha512', $pass.EXTRA_SALT);
-		if($hash == $existing[0]['Creds'])
-			return $existing[0]['Id'];
+		if($hash == $existing[0]['creds'])
+			return $existing[0]['id'];
 	}
 	
 	return false;
