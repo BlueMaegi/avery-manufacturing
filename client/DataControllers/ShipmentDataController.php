@@ -6,65 +6,60 @@ require_once(SERVROOT.'Handlers/ShipmentHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
-$command = ValidateRequest();
-
-if($command == "get" && !isset($_POST['id']))
+try
 {
-	ValidateToken();
-	echo ToJson(GetShipments());
-}
+	$command = ValidateRequest();
 
-if($command == "get" && isset($_POST['id']))
-{
-	ValidateToken();
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetShipment($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
-
-if($command == "create" && isset($_POST['shipment']))
-{
-	$item = ThrowInvalid(ValidateShipment($_POST['shipment']));
-	if($item)
+	if($command == "get" && !isset($_POST['id']))
 	{
+		ValidateToken();
+		SetResult(ToJson(GetShipments()));
+	}
+
+	if($command == "get" && isset($_POST['id']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$item = GetShipment($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+
+	if($command == "create" && isset($_POST['shipment']))
+	{
+		$item = ThrowInvalid(ValidateShipment($_POST['shipment']));
 		$newShipment = CreateShipment($item);
 	
-		if($newShipment)
-			echo ToJson($newShipment);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		SetResult(ToJson($newShipment));
 	}
-}
 
-if($command == "update" && isset($_POST['shipment']))
-{
-	$item = ThrowInvalid(ValidateShipment($_POST['shipment']));
-	if($item && isset($item['id']))
+	if($command == "update" && isset($_POST['shipment']))
 	{
-		$success = UpdateShipment($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-	}
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
-
-if($command == "delete" && isset($_POST['id']))
-{
-	ValidateToken();
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$success = DeleteShipment($id);
+		$item = ThrowInvalid(ValidateShipment($_POST['shipment']));
+		if(!isset($item['id']))
+			throw new Exception("Invalid Request", 400);
 	
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		$success = UpdateShipment($item);
+		SetResult($success);
+	}
+
+	if($command == "delete" && isset($_POST['id']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$success = DeleteShipment($id);
+	
+		SetResult($success);	
+	}
+	
+	ReturnResult();
+}
+catch(Exception $e)
+{
+	ReturnError($e->getCode(), $e->getMessage());
 }
 
 ?>

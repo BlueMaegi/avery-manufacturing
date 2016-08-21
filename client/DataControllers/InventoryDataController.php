@@ -6,64 +6,59 @@ require_once(SERVROOT.'Handlers/InventoryHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
-$command = ValidateRequest();
-ValidateToken();
-
-if($command == "get" && isset($_POST['locationId']) && !isset($_POST['id']))
+try
 {
-	$id = ValidateIntParam($_POST['locationId']);
-	echo ToJson(GetInventory($id));
-}
+	$command = ValidateRequest();
+	ValidateToken();
 
-if($command == "get" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetInventoryItem($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
-}
-
-if($command == "create" && isset($_POST['inventory']))
-{
-	$item = ThrowInvalid(ValidateInventoryItem($_POST['inventory']));
-	if($item)
+	if($command == "get" && isset($_POST['locationId']) && !isset($_POST['id']))
 	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['locationId']));
+		SetResult(ToJson(GetInventory($id)));
+	}
+
+	if($command == "get" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$item = GetInventoryItem($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+
+	if($command == "create" && isset($_POST['inventory']))
+	{
+		$item = ThrowInvalid(ValidateInventoryItem($_POST['inventory']));
 		$newInventory = CreateInventoryItem($item);
 	
-		if($newInventory)
-			echo ToJson($newInventory);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		SetResult(ToJson($newInventory));
 	}
-}
 
-if($command == "update" && isset($_POST['inventory']))
-{
-	$item = ThrowInvalid(ValidateInventoryItem($_POST['inventory']));
-	if($item && isset($item['id']))
+	if($command == "update" && isset($_POST['inventory']))
 	{
-		$success = UpdateInventoryItem($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-	}
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);	
-}
-
-if($command == "delete" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$success = DeleteInventory($id);
+		$item = ThrowInvalid(ValidateInventoryItem($_POST['inventory']));
+		if(!isset($item['id']))
+			throw new Exception("Invalid Request", 400);
 	
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		$success = UpdateInventoryItem($item);
+		SetResult($success);
+	}
+
+	if($command == "delete" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$success = DeleteInventory($id);
+	
+		SetResult($success);	
+	}
+	
+	ReturnResult();
+}
+catch(Exception $e)
+{
+	ReturnError($e->getCode(), $e->getMessage());
 }
 
 ?>

@@ -6,63 +6,59 @@ require_once(SERVROOT.'Handlers/OrderHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
-$command = ValidateRequest();
-
-if($command == "get" && !isset($_POST['id']))
+try
 {
-	ValidateToken();
-	echo ToJson(GetOrders());
-}
+	$command = ValidateRequest();
 
-if($command == "get" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetOrder($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
-
-if($command == "create" && isset($_POST['order']))
-{
-	$item = ThrowInvalid(ValidateOrder($_POST['order']));
-	if($item)
+	if($command == "get" && !isset($_POST['id']))
 	{
+		ValidateToken();
+		SetResult(ToJson(GetOrders()));
+	}
+
+	if($command == "get" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$item = GetOrder($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+
+	if($command == "create" && isset($_POST['order']))
+	{
+		$item = ThrowInvalid(ValidateOrder($_POST['order']));
 		$newOrder = CreateOrder($item);
 	
-		if($newOrder)
-			echo ToJson($newOrder);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		SetResult(ToJson($newOrder));
 	}
-}
 
-if($command == "update" && isset($_POST['order']))
-{
-	$item = ThrowInvalid(ValidateOrder($_POST['order']));
-	if($item && isset($item['id']))
+	if($command == "update" && isset($_POST['order']))
 	{
+		$item = ThrowInvalid(ValidateOrder($_POST['order']));
+		if(!isset($item['id']))
+			throw new Exception("Invalid Request", 400);
+		
 		$success = UpdateOrder($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		SetResult($success);
 	}
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
 
-if($command == "delete" && isset($_POST['id']))
+	if($command == "delete" && isset($_POST['id']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+	
+		$success = DeleteOrder($id);
+		SetResult($success);
+	}
+	
+	ReturnResult();
+}
+catch(Exception $e)
 {
-	ValidateToken();
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$success = DeleteOrder($id);
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+	ReturnError($e->getCode(), $e->getMessage());
 }
 
 ?>

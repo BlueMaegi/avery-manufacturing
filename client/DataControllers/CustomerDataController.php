@@ -6,63 +6,60 @@ require_once(SERVROOT.'Handlers/CustomerHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
+try
+{
+
 $command = ValidateRequest();
 
-if($command == "get" && !isset($_POST['id']))
-{
-	echo ToJson(GetCustomers());
-}
-
-if($command == "get" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetCustomer($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
-
-if($command == "create" && isset($_POST['customer']))
-{
-	$item = ThrowInvalid(ValidateCustomer($_POST['customer']));
-	if($item)
+	if($command == "get" && !isset($_POST['id']))
 	{
+		SetResult(ToJson(GetCustomers()));
+	}
+
+	if($command == "get" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$item = GetCustomer($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+		
+		SetResult(ToJson($item));
+	}
+
+	if($command == "create" && isset($_POST['customer']))
+	{
+		$item = ThrowInvalid(ValidateCustomer($_POST['customer']));
 		$newCustomer = CreateCustomer($item);
 	
-		if($newCustomer)
-			echo ToJson($newCustomer);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		SetResult(ToJson($newCustomer));
 	}
-}
 
-if($command == "update" && isset($_POST['customer']))
-{
-	ValidateToken();
-	$item = ThrowInvalid(ValidateCustomer($_POST['customer']));
-	if($item && isset($item['id']))
+	if($command == "update" && isset($_POST['customer']))
 	{
+		ValidateToken();
+		$item = ThrowInvalid(ValidateCustomer($_POST['customer']));
+		if(!isset($item['id']))
+				throw new Exception("Invalid Request", 400);
+	
 		$success = UpdateCustomer($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-	}	
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
+		SetResult($success);
+	}
 
-if($command == "delete" && isset($_POST['id']))
+	if($command == "delete" && isset($_POST['id']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+	
+		$success = DeleteCustomer($id);
+		SetResult($success);
+	}
+	
+	ReturnResult();
+}
+catch(Exception $e)
 {
-	ValidateToken();
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$success = DeleteCustomer($id);
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+	ReturnError($e->getCode(), $e->getMessage());
 }
 
 ?>

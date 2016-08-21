@@ -5,64 +5,53 @@ require_once(SERVROOT.'Lib/Common.php');
 require_once(SERVROOT.'Handlers/UserHandler.php');
 //-------------------------------------------------
 
-function ValidateRequest()
-{
-	$restFunctions = ["get", "create", "update", "delete"];
-	if(isset($_POST['func']))
-	{
-		$command = strtolower(SanitizeString($_POST['func'], 7));
-	 	if(in_array($command, $restFunctions))
-	 		return $command;
-	}
-	
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
-}
+$errors = "";
+$result = "";
+$baseRestFunctions = ["get", "create", "update", "delete"];
+$userRestFunctions = ["login", "logout", "refresh"];
+$purchaseRestFunctions = ["shipping", "rates", "card", "complete"];
 
-function ValidateUserRequest()
+function ValidateRequest($type = '')
 {
-	$restFunctions = ["login", "logout", "refresh"];
-	if(isset($_POST['func']))
-	{
-		$command = strtolower(substr($_POST['func'], 0, 8));
-	 	if(in_array($command, $restFunctions))
-	 		return $command;
-	}
-	
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
-}
+	global $baseRestFunctions, $userRestFunctions, $purchaseRestFunctions;
 
-function ValidatePurchaseRequest()
-{
-	$restFunctions = ["shipping", "rates", "card", "complete"];
-	if(isset($_POST['func']))
-	{
-		$command = strtolower(substr($_POST['func'], 0, 9));
-	 	if(in_array($command, $restFunctions))
-	 		return $command;
-	}
+	$restFunctions = $baseRestFunctions;
+	if($type == 'user')
+		$restFunctions = $userRestFunctions;
+	if($type == 'purchase')
+		$restFunctions = $purchaseRestFunctions;
+		
+	if(!isset($_POST['func']))
+		throw new Exception("Invalid Request", 400);
+
+	$command = strtolower(SanitizeString($_POST['func'], 9));
 	
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+	if(!in_array($command, $restFunctions))
+		throw new Exception("Invalid Request", 400);
+	
+	return $command;
 }
 
 function ThrowInvalid($data)
 {
 	if($data == false || is_null($data) || $data === "")	
-		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request", true, 400);
+		throw new Exception("Invalid Request", 400);
 	
 	return $data;
 }
 
 function ValidateToken()
 {
-	if(isset($_POST['authId']) && isset($_POST['auth']))
-	{
-		$id = ValidateIntParam($_POST['authId']);
-		$token = SanitizeString($_POST['auth'], 150); 
-		if(ExternalCheckToken($id, $token))
-			return true;
-	}
+	if(!isset($_POST['authId']) || !isset($_POST['auth']))
+		throw new Exception("Invalid Request", 400);
 
-	header($_SERVER["SERVER_PROTOCOL"]." 403 Unauthorized", true, 403);
+	$id = ValidateIntParam($_POST['authId']);
+	$token = SanitizeString($_POST['auth'], 150); 
+	
+	if(!ExternalCheckToken($id, $token))
+		throw new Exception("Unauthorized", 403);
+
+	return true;
 }
 
 function ToJson($resultSet)
@@ -88,6 +77,23 @@ function ToJson($resultSet)
 	
 	$jsonResult .= ']}';
 	return $jsonResult;
+}
+
+function ReturnError($code, $message)
+{
+	header($_SERVER["SERVER_PROTOCOL"]." ".$code." ".$message, true, $code);
+}
+
+function SetResult($data)
+{
+	global $results;
+	$results = $data;
+}
+
+function ReturnResult()
+{
+	global $results;
+	echo $results;
 }
 
 ?>

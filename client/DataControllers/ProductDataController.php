@@ -7,84 +7,68 @@ require_once(SERVROOT.'Handlers/EasyPostHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
-$command = ValidateRequest();
-
-if($command == "get" && !isset($_POST['id']))
+try
 {
-	echo ToJson(GetProducts());
-}
+	$command = ValidateRequest();
 
-if($command == "get" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetProduct($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-}
-
-if($command == "create" && isset($_POST['product']))
-{
-	if(ValidateToken())
+	if($command == "get" && !isset($_POST['id']))
 	{
-		$item = ThrowInvalid(ValidateProduct($_POST['product']));
-		if($item)
-		{
-			$newProduct = CreateProduct($item);
-	
-			if($newProduct)
-				echo ToJson($newProduct);
-			else 
-				header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
-		}
+		SetResult(ToJson(GetProducts()));
 	}
-}
 
-if($command == "create" && isset($_POST['parcel']))
-{
-	$parcel = ThrowInvalid(ValidateParcel($_POST['parcel']));
-	if($parcel)
-	{
-		$epParcel = CreateParcel($parcel);
-		
-		if($epParcel)
-			echo $epParcel['id'];
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
-	}
-}
-
-if($command == "update" && isset($_POST['product']))
-{
-	if(ValidateToken())
-	{
-		$item = ThrowInvalid(ValidateProduct($_POST['product']));
-		if($item && isset($item['id']))
-		{
-			$success = UpdateProduct($item);
-			if($success)
-				echo $success;
-			else 
-				header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
-		}
-		else
-			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-	}
-}
-
-if($command == "delete" && isset($_POST['id']))
-{
-	if(ValidateToken())
+	if($command == "get" && isset($_POST['id']))
 	{
 		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-		$success = DeleteProduct($id);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		$item = GetProduct($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+		
+		SetResult(ToJson($item));
 	}
+
+	if($command == "create" && isset($_POST['product']))
+	{
+		ValidateToken();
+		$item = ThrowInvalid(ValidateProduct($_POST['product']));
+
+		$newProduct = CreateProduct($item);
+		SetResult(ToJson($newProduct));	
+	}
+
+	if($command == "create" && isset($_POST['parcel']))
+	{
+		$parcel = ThrowInvalid(ValidateParcel($_POST['parcel']));
+
+		$epParcel = CreateParcel($parcel);
+		SetResult($epParcel['id']);
+	}
+
+	if($command == "update" && isset($_POST['product']))
+	{
+		ValidateToken();
+		$item = ThrowInvalid(ValidateProduct($_POST['product']));
+		if(!isset($item['id']))
+			throw new Exception("Invalid Request", 400);
+	
+		$success = UpdateProduct($item);
+		SetResult($success);
+	}
+
+	if($command == "delete" && isset($_POST['id']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		
+		$success = DeleteProduct($id);
+		SetResult($success);
+	}
+	
+	ReturnResult();
+}
+catch(Exception $e)
+{
+	ReturnError($e->getCode(), $e->getMessage());
 }
 
 ?>

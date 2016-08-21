@@ -6,62 +6,59 @@ require_once(SERVROOT.'Handlers/LocationHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
-$command = ValidateRequest();
-ValidateToken();
-
-if($command == "get" && !isset($_POST['id']))
+try
 {
-	echo ToJson(GetLocations());
-}
+	$command = ValidateRequest();
+	ValidateToken();
 
-if($command == "get" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetLocation($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
-}
-
-if($command == "create" && isset($_POST['location']))
-{
-	$item = ThrowInvalid(ValidateLocation($_POST['location']));
-	if($item)
+	if($command == "get" && !isset($_POST['id']))
 	{
+		SetResult(ToJson(GetLocations()));
+	}
+
+	if($command == "get" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$item = GetLocation($id);
+	
+		if(!$item)
+				throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+
+	if($command == "create" && isset($_POST['location']))
+	{
+		$item = ThrowInvalid(ValidateLocation($_POST['location']));
 		$newLocation = CreateLocation($item);
 	
-		if($newLocation)
-			echo ToJson($newLocation);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		SetResult(ToJson($newLocation));
 	}
-}
 
-if($command == "update" && isset($_POST['location']))
-{
-	$item = ThrowInvalid(ValidateLocation($_POST['location']));
-	if($item)
+	if($command == "update" && isset($_POST['location']))
 	{
+		$item = ThrowInvalid(ValidateLocation($_POST['location']));
+
+		if(!isset($item['id']))
+				throw new Exception("Invalid Request", 400);
+			
 		$success = UpdateLocation($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		SetResult($success);
 	}
-}
 
-if($command == "delete" && isset($_POST['id']))
+	if($command == "delete" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$success = DeleteLocation($id);
+	
+		SetResult($success);
+	}
+
+	ReturnResult();
+}
+catch(Exception $e)
 {
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$success = DeleteLocation($id);
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+	ReturnError($e->getCode(), $e->getMessage());
 }
-
-
 
 ?>

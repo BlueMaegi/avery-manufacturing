@@ -6,61 +6,59 @@ require_once(SERVROOT.'Handlers/InventoryHistoryHandler.php');
 require_once('DataLib.php');
 //-------------------------------------------------
 
-$command = ValidateRequest();
-ValidateToken();
-
-if($command == "get" && !isset($_POST['id']) && isset($_POST['inventoryId']))
+try
 {
-	$id = ThrowInvalid(ValidateIntParam($_POST['inventoryId']));
-	echo ToJson(GetHistories($id));
-}
+	$command = ValidateRequest();
+	ValidateToken();
 
-if($command == "get" && isset($_POST['id']))
-{
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$item = GetInventoryHistory($id);
-	
-	if($item)
-		echo ToJson($item);
-	else
-		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 403);
-}
-
-if($command == "create" && isset($_POST['inventoryHistory']))
-{
-	$item = ThrowInvalid(ValidateHistory($_POST['inventoryHistory']));
-	if($item)
+	if($command == "get" && !isset($_POST['id']) && isset($_POST['inventoryId']))
 	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['inventoryId']));
+		SetResult(ToJson(GetHistories($id)));
+	}
+
+	if($command == "get" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$item = GetInventoryHistory($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+
+	if($command == "create" && isset($_POST['inventoryHistory']))
+	{
+		$item = ThrowInvalid(ValidateHistory($_POST['inventoryHistory']));
 		$newHistory = CreateHistory($item);
 	
-		if($newHistory)
-			echo ToJson($newHistory);
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);
+		SetResult(ToJson($newHistory));
 	}
-}
 
-if($command == "update" && isset($_POST['inventoryHistory']))
-{
-	$item = ThrowInvalid(ValidateHistory($_POST['inventoryHistory']));
-	if($item)
+	if($command == "update" && isset($_POST['inventoryHistory']))
 	{
+		$item = ThrowInvalid(ValidateHistory($_POST['inventoryHistory']));
+
+		if(!isset($item['id']))
+			throw new Exception("Invalid Request", 400);
+
 		$success = UpdateHistory($item);
-		if($success)
-			echo $success;
-		else 
-			header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+		SetResult($success);
 	}
-}
 
-if($command == "delete" && isset($_POST['id']))
+	if($command == "delete" && isset($_POST['id']))
+	{
+		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
+		$success = DeleteHistory($id);
+	
+		SetResult($success);
+	}
+	
+	ReturnResult();
+}
+catch(Exception $e)
 {
-	$id = ThrowInvalid(ValidateIntParam($_POST['id']));
-	$success = DeleteHistory($id);
-	if($success)
-		echo $success;
-	else 
-		header($_SERVER["SERVER_PROTOCOL"]." 500 Server Error", true, 500);	
+	ReturnError($e->getCode(), $e->getMessage());
 }
-
 ?>
