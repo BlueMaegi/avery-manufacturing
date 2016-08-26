@@ -96,8 +96,11 @@ function CheckToken($id, $token)
 			$dateStr = substr($token, $k, 1).$dateStr;
 			$token = substr_replace($token, '', $k, 1);
 		}
-
+		//var_dump($dateStr);
 		$difference = $now - intval($dateStr);
+		//var_dump($token);
+		//var_dump($difference);
+		//var_dump($hash);
 		if($difference >= 0 && $difference < EXPIRATION && $token == $hash)
 			return true;
 			
