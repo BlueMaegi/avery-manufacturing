@@ -1,15 +1,35 @@
+var ajaxLoadStack = [];
+
 $(function(){
 	AutoloadTemplates(); 
 	var id = GetUrlParam('id');
 	AutoloadDataTemplates(id);
+	ParseTemplateLinks(document);
+	//in case the page we're on doesn't need templates
+	if(ajaxLoadStack.length <= 0) PopPromise(); 
 });
+
+function PushPromise()
+{
+	ajaxLoadStack.push(ajaxLoadStack.length);
+}
+function PopPromise()
+{
+	if(ajaxLoadStack.length > 0)
+		ajaxLoadStack.pop();
+	if(ajaxLoadStack.length <= 0)
+		$(window).trigger("loadscripts");
+}
 
 function AutoloadTemplates()
 {
 	var elements = $(".template.autoload");
 	$(elements).each(function(idx, ele){
-		$.get("Templates/"+$(ele).attr("rel")+".html", function(data) {
+		PushPromise();
+		$.get(GetLocalUrl("Templates/"+$(ele).attr("rel")+".html"), function(data) {
 			$(ele).replaceWith(data);
+			ParseTemplateLinks(ele);
+			PopPromise();
 		});
 	});
 }
@@ -18,6 +38,7 @@ function AutoloadDataTemplates(id)
 {
 	var elements = $(".data-template.autoload");
 	$(elements).each(function(idx, container){
+		PushPromise();
 		LoadDataTemplate(container, id)
 	});
 }
@@ -25,10 +46,10 @@ function AutoloadDataTemplates(id)
 function LoadDataTemplate(container, id)
 {
 	var dataType = $(container).attr("rel");
-	var dataEndpoint = dataType.charAt(0).toUpperCase() + dataType.substr(1).toLowerCase();//todo:capitalize
+	var dataEndpoint = dataType.charAt(0).toUpperCase() + dataType.substr(1).toLowerCase();
 	var postData = {"func":"get"};
 	if(id) postData["id"] = id;
-	var templateEndpoint = "Templates/"+dataType+(id?"":"s")+".html";
+	var templateEndpoint = GetLocalUrl("Templates/"+dataType+(id?"":"s")+".html");
 	
 	Ajax(dataEndpoint, postData, function(data){
 	$.get(templateEndpoint, function(template) {
@@ -46,6 +67,8 @@ function LoadDataTemplate(container, id)
 				$(container).append(inner);
 			});
 		}
+		ParseTemplateLinks(container);
+		PopPromise();
 	});});
 }
 
@@ -53,18 +76,29 @@ function ParseObjectIntoTemplate(data, template)
 {
 	for (var property in data) {
 		if (data.hasOwnProperty(property)) {
-			template = template.replace("["+property+"]", data[property]);
+			var reg = new RegExp("\\["+property+"\\]", "g");
+			template = template.replace(reg, data[property]);
 		}
 	}
 	
 	return template;
 }
 
+function ParseTemplateLinks(container)
+{
+	var elements = $("a.local-link", container);
+	$(elements).each(function(idx, e){
+		var target = $(e).attr("href");
+		target = GetLocalUrl(target);
+		$(e).attr("href", target);
+	});
+}
+
 function Ajax(object, dataSet, callback)
 {
 	//TODO: catch 404 and 403 and reroute...perhaps others too
 	$.ajax({
-	  url: "DataControllers/"+object+"DataController.php",
+	  url: GetLocalUrl("DataControllers/"+object+"DataController.php"),
 	  method: "POST",
 	  data: dataSet
 	}).done(function(data){
@@ -80,4 +114,42 @@ function GetUrlParam(name){
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function GetLocalUrl(path)
+{
+	return "http://"+window.location.hostname+":8888/"+path;
 }	
+
+function GetCookie()
+{
+	var name = "bucketofsnow=";
+    var ca = document.cookie.split(';');
+    var result = "";
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            result = c.substring(name.length, c.length);
+        }
+    }
+    return JSON.parse(result);
+}
+
+function SetCookie(value)
+{
+	var cvalue = JSON.stringify(value);
+	var expirationDays = 7;
+	var name = "bucketofsnow";
+	var d = new Date();
+    d.setTime(d.getTime() + (expirationDays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = name + "=" + cvalue + "; " + expires;
+}
+
+function DestroyCookie()
+{
+	document.cookie = "bucketofsnow=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+}

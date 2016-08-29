@@ -1,0 +1,25 @@
+#cart-table{
+	color:black;
+}
+
+#cart-table .plus, #cart-table .minus{
+	width: 1.5em;
+	-webkit-touch-callout: none; /* iOS Safari */
+  	-webkit-user-select: none;   /* Chrome/Safari/Opera */
+  	-khtml-user-select: none;    /* Konqueror */
+  	-moz-user-select: none;      /* Firefox */
+  	-ms-user-select: none;
+}
+
+#cart-table .quantity{
+	width: 3em;
+    line-height: 1.9em;
+    text-align:center;
+    position: relative;
+    top: -1px;
+}
+
+.subtotal{
+	color:black;
+	font-size:15pt;
+}
