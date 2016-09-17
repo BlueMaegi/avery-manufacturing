@@ -26,7 +26,7 @@ function VerifyAddress($address)
 	if($address['verifications']['delivery']['success'])
 		return $address;
 	else
-		return $address['verifications']['delivery']['errors'];
+		return $address->verifications->delivery->errors[0]->message;
 }
 
 function GetShipmentRates($addressId, $productId, $locationId)
@@ -58,6 +58,7 @@ function GetShipmentRates($addressId, $productId, $locationId)
 			$currRate['id'] = $rate['id'];
 			$currRate['shipmentId'] = $rate['shipment_id'];
 			$currRate['carrier'] = $rate['carrier'];
+			$currRate['days'] = $rate['delivery_days'];
 			
 			$rates[] = $currRate;
 		}

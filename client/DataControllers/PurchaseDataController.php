@@ -34,7 +34,7 @@ try
 
 		$epAddress = VerifyAddress($address);
 		if(!isset($epAddress['object']))
-			throw new Exception("Invalid Request", 400);
+			throw new Exception("Invalid Request ".$epAddress, 400);
 	
 		SetResult(json_encode($epAddress['id']));
 	}
@@ -47,9 +47,10 @@ try
 		$rates = GetShipmentRates($addressId, $productId, 1); //HARD CODED LOCATION HERE
 		SetResult(json_encode($rates));
 	}
-	}
 	
 
+	//TODO: clean this up so it only takes a stripe card id, easypost rate id, customer email, 
+	//and a list of productIds & quantities
 	if($command == "complete" && isset($_POST['purchase']))
 	{
 		$purchase = ThrowInvalid(ValidatePurchase($_POST['purchase']));
