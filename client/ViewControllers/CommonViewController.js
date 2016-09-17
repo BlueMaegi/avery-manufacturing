@@ -1,6 +1,10 @@
 var ajaxLoadStack = [];
 
 $(function(){
+	//if we don't have a cookie yet, create a default one
+	if(GetCookie() == null)
+		SetCookie({});
+
 	AutoloadTemplates(); 
 	var id = GetUrlParam('id');
 	AutoloadDataTemplates(id);
@@ -97,12 +101,15 @@ function ParseTemplateLinks(container)
 function Ajax(object, dataSet, callback)
 {
 	//TODO: catch 404 and 403 and reroute...perhaps others too
+
 	$.ajax({
 	  url: GetLocalUrl("DataControllers/"+object+"DataController.php"),
 	  method: "POST",
 	  data: dataSet
 	}).done(function(data){
-		callback(JSON.parse(data).data);
+		var result = JSON.parse(data);
+		if(result.hasOwnProperty("data")) callback(result.data);
+		else callback(result);
 	});
 }
 	
@@ -135,7 +142,7 @@ function GetCookie()
             result = c.substring(name.length, c.length);
         }
     }
-    return JSON.parse(result);
+    return (result.length > 0)? JSON.parse(result) : null;
 }
 
 function SetCookie(value)
@@ -152,4 +159,12 @@ function SetCookie(value)
 function DestroyCookie()
 {
 	document.cookie = "bucketofsnow=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+}
+
+function SortCart()
+{
+	var keys = [];
+    for(var key in cart)
+        if(cart.hasOwnProperty(key)) keys.push(parseInt(key));
+    return keys.sort(function(a,b) {return a - b;});
 }

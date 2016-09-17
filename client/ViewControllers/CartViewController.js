@@ -10,6 +10,12 @@ var products = [];
 
 function LoadCartIntoTemplate()
 {
+	if(cart == null || keys.length <= 0)
+	{
+		$("#cart-table").replaceWith("<p class='empty-cart'>Your cart is empty, there is nothing to show.<p>");
+		return;
+	}
+
 	$.get(GetLocalUrl("Templates/cart-item.html"), function(template) {
 		$.each(keys, function(idx, id){
 			var quantity = parseInt(cart[id]);
@@ -19,6 +25,7 @@ function LoadCartIntoTemplate()
 				inner = inner.replace("[quantity]", quantity);
 				products[id] = SetupProductRow($.parseHTML(inner));
 				$("#cart-table").append(products[id].element);
+				RefreshSubtotal();
 			});
 		});
 	});
@@ -105,12 +112,4 @@ function RefreshSubtotal()
 		subtotal += row.unitPrice * row.quantity;
 	};
 	$("#amount").text(subtotal.toFixed(2));
-}
-
-function SortCart()
-{
-	var keys = [];
-    for(var key in cart)
-        if(cart.hasOwnProperty(key)) keys.push(parseInt(key));
-    return keys.sort(function(a,b) {return a - b;});
 }
