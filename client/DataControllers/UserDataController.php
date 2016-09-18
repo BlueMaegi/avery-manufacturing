@@ -30,7 +30,7 @@ try
 		$id = ThrowInvalid(ValidateIntParam($_POST['authId']));
 		$old = SanitizeString($_POST['auth'], 150);
 		$new = RefreshToken($id, $old);
-		SetResult($new);
+		SetResult(json_encode($new));
 	}	
 	
 	ReturnResult();

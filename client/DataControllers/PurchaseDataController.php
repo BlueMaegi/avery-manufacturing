@@ -99,7 +99,7 @@ try
 		SaveLabelImage($shipment['id'], $label);
 		
 		//TODO: send receipt email	
-		SetResult($label);	
+		SetResult(json_encode($label));	
 	}
 
 	ReturnResult();

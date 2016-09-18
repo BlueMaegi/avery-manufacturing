@@ -107,6 +107,11 @@ function Ajax(object, dataSet, callback)
 	  method: "POST",
 	  data: dataSet
 	}).done(function(data){
+		if(!data || data.length <= 0)
+		{
+			callback(false);
+			return;
+		}
 		var result = JSON.parse(data);
 		if(result.hasOwnProperty("data")) callback(result.data);
 		else callback(result);
