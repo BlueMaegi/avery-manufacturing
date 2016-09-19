@@ -219,24 +219,10 @@ function CompletePurchase()
 	var selectedRate = $("input[value='"+shipmentObj.rateId+"']").siblings();
 	
 	var purchase = {
-		customer: {
-			"address":shipmentObj.streetField.val(),
-			"city":shipmentObj.cityField.val(),
-			"state":shipmentObj.stateField.val(),
-			"zip":shipmentObj.zipField.val(),
-			"name":shipmentObj.nameField.val(),
-			"company":shipmentObj.companyField.val(),
-			"email":shipmentObj.emailField.val(),
-			"phone":shipmentObj.phoneField.val(),
-			"lastFour":card.numberField.val().substr(card.numberField.val().length - 4)
-		},
-		shipment: {
-			"rateType":$(selectedRate).filter("p.name").text(),
-			"cost":$(selectedRate).filter("p.cost").text(),
-			"status":"0",
-			"epLabelId":shipmentObj.rateId,
-			"epShipmentId":shipmentObj.id
-		},
+		epLabelId:shipmentObj.rateId,
+		epShipmentId:shipmentObj.id,
+		cardId: card.id,
+		lastFour: card.numberField.val().substr(card.numberField.val().length - 4),
 		orderItems:[]
 	};
 	
@@ -245,12 +231,9 @@ function CompletePurchase()
 		purchase.orderItems.push({productId:id, quantity:qty, taxAmount:"0", discount:"0"});
 	});
 	
-	//adjkfheruds so insecure....
-	Ajax("Purchase", {"func":"card", "id":card.id, "amount":$("#total").text()}, function(data){  
-		purchase.chargeId = data;
-		Ajax("Purchase", {"func":"complete", "purchase":purchase}, function(data){
-			console.log(data);
-		});
+	Ajax("Purchase", {"func":"complete", "purchase":purchase}, function(data){
+		console.log(data);
+		//TODO: clear cart cookie
 	});
 }
 

@@ -83,11 +83,41 @@ function CreateParcel($parcel)
 function PurchaseLabel($rateId, $shipmentId)
 {
 	$shipment = \EasyPost\Shipment::retrieve($shipmentId);
-	
+
 	$thing = $shipment->buy(array('rate'=>array('id'=>$rateId)));
 	$label = $thing->postage_label->label_url;
 
 	return $label;
+}
+
+function GetCustomerFromEp($rateId)
+{
+	$rate = \EasyPost\Rate::retrieve($rateId);
+	$shipment = \EasyPost\Shipment::retrieve($rate->shipment_id)->to_address;
+	
+	$customer = "";
+	$customer["name"] = $shipment->name;
+	$customer["email"] = $shipment->email;
+	$customer["address"] = $shipment->street1.$shipment->street2;
+	$customer["city"] = $shipment->city;
+	$customer["state"] = $shipment->state;
+	$customer["zip"] = $shipment->zip;
+	$customer["phone"] = $shipment->phone;
+	
+	return $customer;
+}
+
+function GetShipmentFromEp($rateId)
+{
+	$rate = \EasyPost\Rate::retrieve($rateId);
+	
+	$shipment = "";
+	$shipment["rateType"] = $rate->service;
+	$shipment["cost"] = $rate->rate;
+	$shipment["epLabelId"] = $rate->id;
+	$shipment["epShipmentId"] = $rate->shipment_id;
+	
+	return $shipment;
 }
 
 function ValidateAddress($data)

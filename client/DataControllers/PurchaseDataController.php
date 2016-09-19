@@ -49,8 +49,6 @@ try
 	}
 	
 
-	//TODO: clean this up so it only takes a stripe card id, easypost rate id, customer email, 
-	//and a list of productIds & quantities
 	if($command == "complete" && isset($_POST['purchase']))
 	{
 		$purchase = ThrowInvalid(ValidatePurchase($_POST['purchase']));
@@ -59,11 +57,20 @@ try
 		$customer = CreateCustomer($purchase['customer'])[0];
 		$order['customerId'] = $customer['id'];
 		$order = CreateOrder($order)[0];
+		$purchase['shipment']['orderId'] = $order['id'];
+		
+		$taxRate = ($customer["state"] == "NY")? 0.08 : 0.0;
+		$purchase['shipment']['taxAmount'] = $purchase['shipment']['cost'] * $taxRate;
+		$shipment = CreateShipment($purchase['shipment'])[0];
+		
+		$totalCharge = $purchase['shipment']['taxAmount'] + $purchase['shipment']['cost'];
 			
 		foreach($purchase['orderItems'] as $item)
 		{
 			$item['orderId'] = $order['id'];
+			$item['shipmentId'] = $shipment['id'];
 			$inventoryList = GetInventoryByProduct($item['productId']);
+			$product = GetProduct($item['productId'])[0];
 			$currIdx = 0;
 			$remainingQty = $item['quantity'];
 		
@@ -87,19 +94,20 @@ try
 				else
 					$currIdx ++;
 			}
-		
+
+			$item['taxAmount'] = $product['price'] * $taxRate;
+			$totalCharge += $product['price'] + $item['taxAmount'];
 			$newItem = CreateOrderItem($item);
 		}
 		
-		CaptureCharge($purchase['chargeId']);
-	
-		$purchase['shipment']['orderId'] = $order['id'];
-		$shipment = CreateShipment($purchase['shipment'])[0];
+		CreateCharge($purchase['cardId'], $totalCharge);
+		//TODO: store charge id on order
+		
 		$label = PurchaseLabel($shipment['eplabelid'], $shipment['epshipmentid']);
 		SaveLabelImage($shipment['id'], $label);
 		
 		//TODO: send receipt email	
-		SetResult(json_encode($label));	
+		SetResult(json_encode($totalCharge));	
 	}
 
 	ReturnResult();
@@ -118,21 +126,26 @@ function ValidatePurchase($data)
 		throw new Exception("Invalid Request", 400);
 	
 	$purchase = "";
-	if(array_key_exists("customer", $data))
+	if(array_key_exists("epLabelId", $data))
 	{
-		$customer = ThrowInvalid(ValidateCustomer($data['customer']));
+		$customer = GetCustomerFromEp(SanitizeString($data['epLabelId'], 100));
+		if(array_key_exists("lastFour", $data)) 
+			$customer["lastFour"] = ThrowInvalid(ValidateIntParam($data['lastFour'], 4));
+		$customer = ThrowInvalid(ValidateCustomer($customer));
 		$purchase['customer'] = $customer;
 	}
 	
-	if(array_key_exists("shipment", $data))
+	if(array_key_exists("epLabelId", $data))
 	{
-		$shipment = ThrowInvalid(ValidateShipment($data['shipment']));
+		$shipment = GetShipmentFromEp(SanitizeString($data['epLabelId'], 100));
+		$shipment["status"] = 0;
+		$shipment = ThrowInvalid(ValidateShipment($shipment));
 		$purchase['shipment'] = $shipment;
 	}
 	
-	if(array_key_exists("chargeId", $data) && SanitizeString($data['chargeId'], 50))
+	if(array_key_exists("cardId", $data) && SanitizeString($data['cardId'], 50))
 	{
-		$purchase['chargeId'] = ThrowInvalid(SanitizeString($data['chargeId'], 50));
+		$purchase['cardId'] = ThrowInvalid(SanitizeString($data['cardId'], 50));
 	}
 	
 	if(array_key_exists("orderItems", $data) && is_array($data['orderItems']))
@@ -150,7 +163,7 @@ function ValidatePurchase($data)
 	}
 			
 	if(array_key_exists("customer", $purchase) && array_key_exists("shipment", $purchase) 
-		&& array_key_exists("chargeId", $purchase) && array_key_exists("orderItems", $purchase))
+		&& array_key_exists("cardId", $purchase) && array_key_exists("orderItems", $purchase))
 		return $purchase;
 }
 
@@ -170,23 +183,17 @@ function ValidatePurchaseProducts($items)
 
 /*
 "purchase":{
-	"customer":{
-		"name":"",
-		"address":"",
-		"email":"",
-		"city":"",
-		"state":"",
-		"zip":"",
-		"phone":"",
-		"lastFour":""
-	},
 	"shipment":{
 		"rateType":"",
 		"cost":"",
 		"status":"", ??
-		"EP-rateId":""
+		"epRateId":""
 	},
 	"chargeId":"",
+	"cardId":"",
+	"lastFour":"",
+	"epShipmentId":"",
+	"epLabelId":"",
 	"orderItems":[
 		{"productId":"","quantity":"","taxAmount":"","discount":""},
 		{"productId":"","quantity":"","taxAmount":"","discount":""},

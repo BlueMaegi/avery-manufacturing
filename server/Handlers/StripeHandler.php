@@ -15,8 +15,8 @@ function CreateCharge($token, $amount)
 	  "amount" => $amount,
 	  "currency" => "usd",
 	  "source" => $token,
-	  "description" => "",
-	  "capture" => false
+	  "description" => ""
+	  //"capture" => false
 	));
 	
 	return $response['id']; //TODO: catch errors*/
