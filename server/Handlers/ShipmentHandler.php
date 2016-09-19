@@ -30,13 +30,14 @@ function CreateShipment($shipment)
 	$params[] = $shipment["orderId"];
 	$params[] = $shipment["epLabelId"];
 	$params[] = $shipment["epShipmentId"];
+	$params[] = $shipment["taxAmount"];
 	
 	$existingOrder = do_query("SELECT * FROM Orders WHERE Id = ?","i", array($shipment["orderId"]));
 	$shipment = false;
 	
 	if($existingOrder)
 	{
-		$id = do_query("INSERT INTO Shipments (RateType, Cost, Status, OrderId, EpLabelId, EpShipmentId) VALUES(?, ?, ?, ?, ?, ?)", "ssiiss", $params);
+		$id = do_query("INSERT INTO Shipments (RateType, Cost, Status, OrderId, EpLabelId, EpShipmentId, TaxAmount) VALUES(?, ?, ?, ?, ?, ?, ?)", "ssiisss", $params);
 		$shipment = do_query("SELECT * FROM Shipments WHERE id = ?","i", array($id));
 	}
 	
@@ -55,8 +56,10 @@ function UpdateShipment($shipment)
 		$params[] = $shipment["status"];
 		$params[] = $shipment["epLabelId"];
 		$params[] = $shipment["epShipmentId"];
+		$params[] = $shipment["taxAmount"];
 		$params[] = $shipment["id"];
-		do_query("UPDATE Shipments SET RateType = ?, Cost = ?, Status = ?, EpLabelId = ?, EpShipmentId = ? WHERE Id = ?","ssissi", $params);
+		
+		do_query("UPDATE Shipments SET RateType = ?, Cost = ?, Status = ?, EpLabelId = ?, EpShipmentId = ?, TaxAmount = ? WHERE Id = ?","ssisssi", $params);
 	}
 	close_db();
 	
@@ -80,6 +83,7 @@ function ValidateShipment($data)
 		$shipment['orderId'] = null;
 		$shipment["epLabelId"] = null;
 		$shipment["epShipmentId"] = null;
+		$shipment["taxAmount"] = 0;
 		
 		if(array_key_exists("id", $data))
 			$shipment["id"] = ValidateIntParam($data["id"]);
@@ -87,6 +91,8 @@ function ValidateShipment($data)
 			$shipment["rateType"] = SanitizeString($data["rateType"], 25);
 		if(array_key_exists("cost", $data))
 			$shipment["cost"] = ValidateFloatParam($data["cost"]);
+		if(array_key_exists("taxAmount", $data))
+			$shipment["taxAmount"] = ValidateFloatParam($data["taxAmount"]);
 		if(array_key_exists("status", $data))
 			$shipment["status"] = ValidateIntParam($data["status"], 3);
 		if(array_key_exists("orderId", $data))
