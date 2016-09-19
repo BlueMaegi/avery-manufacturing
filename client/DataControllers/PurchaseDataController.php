@@ -56,6 +56,7 @@ try
 
 		$customer = CreateCustomer($purchase['customer'])[0];
 		$order['customerId'] = $customer['id'];
+		$order = ValidateOrder($order);
 		$order = CreateOrder($order)[0];
 		$purchase['shipment']['orderId'] = $order['id'];
 		
@@ -100,8 +101,9 @@ try
 			$newItem = CreateOrderItem($item);
 		}
 		
-		CreateCharge($purchase['cardId'], $totalCharge);
-		//TODO: store charge id on order
+		$stripeId = CreateCharge($purchase['cardId'], $totalCharge);
+		$order['stripeChargeId'] = $stripeId;
+		UpdateOrder($order);
 		
 		$label = PurchaseLabel($shipment['eplabelid'], $shipment['epshipmentid']);
 		SaveLabelImage($shipment['id'], $label);
@@ -133,7 +135,7 @@ function ValidatePurchase($data)
 			$customer["lastFour"] = ThrowInvalid(ValidateIntParam($data['lastFour'], 4));
 		$customer = ThrowInvalid(ValidateCustomer($customer));
 		$purchase['customer'] = $customer;
-	
+
 		$shipment = GetShipmentFromEp(SanitizeString($data['epLabelId'], 100));
 		$shipment["status"] = 0;
 		$shipment = ThrowInvalid(ValidateShipment($shipment));

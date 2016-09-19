@@ -26,12 +26,13 @@ function CreateOrder($order)
 {
 	connect_to_db();
 	$params[] = $order["customerId"];
+	$params[] = $order["stripeChargeId"];
 	$order = false;
 	
 	$existing = do_query("SELECT * FROM Customers WHERE Id = ?","i", $params);
 	if($existing)
 	{
-		$id = do_query("INSERT INTO Orders (CustomerId, Date) VALUES(?, NOW())", "s", $params);
+		$id = do_query("INSERT INTO Orders (CustomerId, StripeChargeId, Date) VALUES(?, ?, NOW())", "ss", $params);
 		$order = do_query("SELECT * FROM Orders WHERE Id = ?","i", array($id));
 	}
 	
@@ -43,10 +44,14 @@ function UpdateOrder($order)
 {
 	connect_to_db();
 	$existing = do_query("SELECT * FROM Orders WHERE Id = ?","i", array($order["id"]));
+	
 	if($existing)
 	{
-		//As of now, there's nothing on an order that should be modified...
-		//So... Do nothing
+		$params[] = $order["stripeChargeId"];
+		$params[] = $order["id"];	
+		var_dump($params);
+		
+		do_query("UPDATE Orders SET StripeChargeId = ? WHERE Id = ?","si", $params);
 	}
 	close_db();
 	
@@ -68,11 +73,14 @@ function ValidateOrder($data)
 	{
 		$order = "";
 		$order['id'] = null;
+		$order['stripeChargeId'] = null;
 		
 		if(array_key_exists("id", $data))
 			$order["id"] = ValidateIntParam($data["id"]);
 		if(array_key_exists("customerId", $data))
 			$order["customerId"] = ValidateIntParam($data["customerId"]);
+		if(array_key_exists("stripeChargeId", $data))
+			$order["stripeChargeId"] = SanitizeString($data["stripeChargeId"], 100);
 				
 		if(array_key_exists("customerId", $order))
 			return $order;

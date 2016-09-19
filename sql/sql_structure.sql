@@ -1,9 +1,50 @@
+←
+phpMyAdmin
+HomephpMyAdmin documentationDocumentationReload navigation panel
+RecentFavorites
+Collapse allUnlink from main panel
+New
+Database operationsAveryManufacturing
+NewNew
+Expand/CollapseStructureClients
+Expand/CollapseStructureCustomers
+Expand/CollapseStructureInventory
+Expand/CollapseStructureInventoryHistory
+Expand/CollapseStructureLocations
+Expand/CollapseStructureOrderItems
+Expand/CollapseStructureOrders
+Expand/CollapseStructureProducts
+Expand/CollapseStructureShipments
+Expand/CollapseDatabase operationsinformation_schema
+Expand/CollapseDatabase operationsmysql
+Expand/CollapseDatabase operationsperformance_schema
+Server: localhost:8889 »Database: AveryManufacturing
+Structure Structure
+SQL SQL
+Search Search
+Query Query
+Export Export
+Import Import
+Operations Operations
+Privileges Privileges
+Routines Routines
+Events Events
+More
+Click on the bar to scroll to top of page
+SQL Query ConsoleConsole
+OptionsSet default
+Always expand query messages
+Show query history at start
+Show current browsing query
+[ Back ]
+
+
 -- phpMyAdmin SQL Dump
 -- version 4.4.10
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:8889
--- Generation Time: Sep 19, 2016 at 03:35 AM
+-- Generation Time: Sep 19, 2016 at 04:10 AM
 -- Server version: 5.5.42
 -- PHP Version: 5.6.10
 
@@ -116,7 +157,8 @@ CREATE TABLE `OrderItems` (
 CREATE TABLE `Orders` (
   `Id` int(11) NOT NULL,
   `Date` datetime NOT NULL,
-  `CustomerId` int(11) NOT NULL
+  `CustomerId` int(11) NOT NULL,
+  `StripeChargeId` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -295,3 +337,7 @@ ALTER TABLE `Orders`
 --
 ALTER TABLE `Shipments`
   ADD CONSTRAINT `fk_Shipment_Order` FOREIGN KEY (`OrderId`) REFERENCES `Orders` (`Id`);
+
+[ Back ]
+
+Open new phpMyAdmin window
