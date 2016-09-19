@@ -133,10 +133,7 @@ function ValidatePurchase($data)
 			$customer["lastFour"] = ThrowInvalid(ValidateIntParam($data['lastFour'], 4));
 		$customer = ThrowInvalid(ValidateCustomer($customer));
 		$purchase['customer'] = $customer;
-	}
 	
-	if(array_key_exists("epLabelId", $data))
-	{
 		$shipment = GetShipmentFromEp(SanitizeString($data['epLabelId'], 100));
 		$shipment["status"] = 0;
 		$shipment = ThrowInvalid(ValidateShipment($shipment));
@@ -183,16 +180,8 @@ function ValidatePurchaseProducts($items)
 
 /*
 "purchase":{
-	"shipment":{
-		"rateType":"",
-		"cost":"",
-		"status":"", ??
-		"epRateId":""
-	},
-	"chargeId":"",
 	"cardId":"",
 	"lastFour":"",
-	"epShipmentId":"",
 	"epLabelId":"",
 	"orderItems":[
 		{"productId":"","quantity":"","taxAmount":"","discount":""},

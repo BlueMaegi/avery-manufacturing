@@ -220,7 +220,6 @@ function CompletePurchase()
 	
 	var purchase = {
 		epLabelId:shipmentObj.rateId,
-		epShipmentId:shipmentObj.id,
 		cardId: card.id,
 		lastFour: card.numberField.val().substr(card.numberField.val().length - 4),
 		orderItems:[]

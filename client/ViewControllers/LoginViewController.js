@@ -68,7 +68,7 @@ function TokenExpired()
 {
 	var time = sessionStorage.getItem("time");
 	if(!time) return true;
-	if(Date.now() - time >= 290000) return true;
+	if(Date.now() - time >= 250000) return true;
 	
 	return false;
 }
