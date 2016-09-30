@@ -9,7 +9,7 @@ function GetOrders()
 {
 	connect_to_db();
 	//TODO: include other things that are useful with joins?
-	$orders = do_query("SELECT * FROM Orders","","");
+	$orders = do_query("SELECT o.*, c.Name FROM Orders o JOIN Customers c on c.Id = o.CustomerId","","");
 	close_db();
 	return $orders;
 }

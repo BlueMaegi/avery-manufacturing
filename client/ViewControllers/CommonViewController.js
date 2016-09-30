@@ -49,10 +49,19 @@ function AutoloadDataTemplates(id)
 
 function LoadDataTemplate(container, id)
 {
+	var authId = localStorage.getItem("id");
+	var tok = sessionStorage.getItem("tolkien");
+	
 	var dataType = $(container).attr("rel");
 	var dataEndpoint = dataType.charAt(0).toUpperCase() + dataType.substr(1).toLowerCase();
 	var postData = {"func":"get"};
+	if(authId && tok)
+	{
+		postData["authId"] = authId;
+		postData["auth"] = tok;
+	}
 	if(id) postData["id"] = id;
+	
 	var templateEndpoint = GetLocalUrl("Templates/"+dataType+(id?"":"s")+".html");
 	
 	Ajax(dataEndpoint, postData, function(data){
