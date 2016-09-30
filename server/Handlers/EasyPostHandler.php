@@ -50,22 +50,49 @@ function GetShipmentRates($addressId, $productId, $locationId)
 	
 	if(isset($shipment['rates']) && count($shipment['rates']) > 0)
 	{
-		$rates = "";
+		$rates = array();
 		foreach($shipment['rates'] as $rate)
 		{
 			$currRate['cost'] = $rate['rate'];
-			$currRate['name'] = $rate['service'];
+			$currRate['name'] = MapNames($rate['service']);
 			$currRate['id'] = $rate['id'];
 			$currRate['shipmentId'] = $rate['shipment_id'];
 			$currRate['carrier'] = $rate['carrier'];
 			$currRate['days'] = $rate['delivery_days'];
 			
-			$rates[] = $currRate;
+			$skip = false;
+			foreach((array)$rates as $key => $i)
+			{
+				if(intval($i['days']) == intval($currRate['days']))
+				{
+					$skip = true;
+					if(floatval($i['cost']) > floatval($currRate['cost']))
+					{
+						$rates[$key] = $currRate;
+					}
+				}
+			}
+			unset($i);
+			
+			if(!$skip)
+				$rates[] = $currRate;
 		}
 		
 		return $rates;
 	}
 	return false;
+}
+
+function MapNames($abbv)
+{
+	switch($abbv)
+	{
+		case "First": return "First Class";
+		case "ParcelSelect": return "Parcel Select";
+		case "Express": return "Overnight";
+		case "Priority": return "Priority Mail";
+		default: return "";
+	}
 }
 
 function CreateParcel($parcel)
