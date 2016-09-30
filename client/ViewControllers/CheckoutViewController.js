@@ -36,7 +36,7 @@ function LoadCartIntoTemplate()
 				inner = ParseObjectIntoTemplate(data[0], inner);
 				inner = inner.replace("[quantity]", quantity);
 				$("#order-table").prepend(inner);
-				$("#order-table .subtotal").first().text(price);
+				$("#order-table .subtotal").first().text("$ "+price);
 				products[id] = price;
 				RefreshPrices();
 			});
@@ -57,9 +57,9 @@ function RefreshPrices()
 	
 	subtotal += products.tax;
 		
-	$("#total").text(subtotal.toFixed(2));
-	$("#ship").text(products.ship.toFixed(2));
-	$("#tax").text(products.tax.toFixed(2));
+	$("#total").text("$ "+subtotal.toFixed(2));
+	$("#ship").text("$ "+products.ship.toFixed(2));
+	$("#tax").text("$ "+products.tax.toFixed(2));
 }
 
 function SetupShipping(container)
@@ -118,12 +118,13 @@ function SetupShipping(container)
 		
 		$.get(GetLocalUrl("Templates/ship-rate.html"), function(template) {
 			Ajax("Purchase", {"func":"rates", "addressId":addressId, "productId":productId}, function(data){
+				$(".no-shipping").hide();
 				shipment.id = data[0].shipmentId;
 				$(data).each(function(idx, rate){
 					var inner = template;
 					inner = $.parseHTML(ParseObjectIntoTemplate(rate, inner));
 					rates.push(SetupRate(inner, rate));
-					$("#rates-table tr").append(inner);
+					$("#rates-table").append(inner);
 				});
 			});
 		});
@@ -152,7 +153,8 @@ function SetupShipping(container)
 	
 	function ResetRates()
 	{
-		$("#rates-table tr").empty();
+		$("#rates-table").empty();
+		$("no-shipping").show();
 		rates.length = 0;
 		shipment.rateId = null;
 		shipment.rateSelected = false;

@@ -94,7 +94,7 @@ function SetupProductRow(row)
 			$(product.minusButton).attr("disabled", "disabled");
 		$(product.quantityField).val(product.quantity);
 		
-		$(product.priceField).text("$"+(product.unitPrice * product.quantity).toFixed(2));
+		$(product.priceField).text("$ "+(product.unitPrice * product.quantity).toFixed(2));
 		cart[product.id] = product.quantity;
 		SetCookie(cart);
 		RefreshSubtotal();
@@ -112,4 +112,6 @@ function RefreshSubtotal()
 		subtotal += row.unitPrice * row.quantity;
 	};
 	$("#amount").text(subtotal.toFixed(2));
+	var subRow = $(".subtotal-row").remove();
+	$("#cart-table").append(subRow);
 }

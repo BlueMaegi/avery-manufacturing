@@ -12,66 +12,111 @@
 <body>
 	<div class="template autoload" rel="navbar"></div>
 	<div class="center-main">
-		<h1>Order Details</h1>
-		<table id="shipping-table">
-			<tr><td>Name:</td><td><input type="text" class="name"/></td></tr>
-			<tr><td>Company:</td><td><input type="text" class="company"/></td></tr>
-			<tr><td>Email:</td><td><input type="text" class="email"/></td></tr>
-			<tr><td>Street Address:</td><td><input type="text" class="street"/></td></tr>
-			<tr><td>City:</td><td><input type="text" class="city"/></td></tr>
-			<tr>
-				<td>State:<input type="text" maxlength="3" class="state"/></td>
-				<td>Zip:<input type="text" maxlength="10" class="zip"/></td>
-			</tr>
-			<tr><td>Phone:</td><td><input type="text" class="phone"/></td></tr>
-		</table>
-		<table id="rates-table"><tr></tr></table>
-		<br/>
-		<div id="card-details">
-		<div>
-			<span>Card Number:</span>
-			<input type="text" maxlength="20" class="number"/>
-			<span>CSC:</span>
-			<input type="text" maxlength="4" class="csc"/>
+		<div id="column1">
+			<h2>Shipping Information</h2>
+			<table id="shipping-table" class="form-table">
+				<tr>
+					<td>Name:</td><td></td>
+				</tr>
+				<tr>
+					<td colspan="3"><input type="text" class="name"/></td>
+				</tr>
+				<tr>
+					<td>Company:</td><td></td>
+				</tr>
+				</tr>
+					<td colspan="3"><input type="text" class="company"/></td>
+				</tr>
+				<tr>
+					<td>Street Address:</td><td></td>
+				</tr>
+				<tr>
+					<td colspan="3"><input type="text" class="street"/></td>
+				</tr>
+				<tr>
+					<td>City:</td>
+					<td>State:</td>
+					<td>Zipcode:</td>
+				</tr>
+				<tr>
+					<td><input type="text" class="city"/></td>
+					<td><input type="text" maxlength="3" class="state"/></td>
+					<td><input type="text" maxlength="10" class="zip"/></td>
+				</tr>
+				<tr>
+					<td>Email:</td><td></td>
+				</tr>
+				<tr>
+					<td><input type="text" class="email"/></td><td></td>
+				</tr>
+				<tr>
+					<td>Phone:</td>
+				</tr>
+				<tr>
+					<td><input type="text" class="phone"/></td><td></td>
+				</tr>
+			</table>
+			<h2>Shipping Speed</h2>
+			<p class="no-shipping">Please enter a destination address to see shipping options.</p>
+			<table id="rates-table"></table>
+			<br/>
+			
+			<h2>Payment Information</h2>
+			<table id="card-details" class="form-table">
+				<tr>
+					<td>Card Number:</td>
+					<td>CSC:</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><input type="text" maxlength="20" class="number"/></td>
+					<td><input type="text" maxlength="4" class="csc"/></td>
+				</tr>
+				<tr>
+					<td>Name on Card:</td><td colspan="2">Expiration:</td>
+				</tr>
+				<tr>
+					<td><input type="text" maxlength="50" class="name"/>
+					<td colspan="2">
+					<select class="exp-m">
+					  <option selected disabled hidden>MM</option>
+					  <option value="1">01</option>
+					  <option value="2">02</option>
+					  <option value="3">03</option>
+					  <option value="4">04</option>
+					  <option value="5">05</option>
+					  <option value="6">06</option>
+					  <option value="7">07</option>
+					  <option value="8">08</option>
+					  <option value="9">09</option>
+					  <option value="10">10</option>
+					  <option value="11">11</option>
+					  <option value="12">12</option>
+					</select>
+					<select class="exp-y">
+					  <option selected disabled hidden>YYYY</option>
+					  <option value="2016">2016</option>
+					  <option value="2017">2017</option>
+					  <option value="2018">2018</option>
+					  <option value="2019">2019</option>
+					</select>
+					</td>
+				</tr>
+			</table>
 		</div>
-		<div>
-			<span>Name on Card:</span>
-			<input type="text" maxlength="50" class="name"/>
+		<div id="column2">
+			<h2>Order Summary</h2>
+			<table id="order-table">
+				<tr><td colspan="3"><hr></td></tr>
+				<tr><td colspan="2">Shipping:</td><td id="ship">N/A</td></tr>
+				<tr><td colspan="2">Tax</td><td id="tax">N/A</td></tr>
+				<tr><td colspan="2">Total:</td><td id="total">N/A</td></tr>
+			</table>
+			<div class="complete primary-button">Place Order</div>
 		</div>
-		<div>
-			<span>Expiration:</span>
-			<select class="exp-m">
-			  <option selected disabled hidden>MM</option>
-			  <option value="1">01</option>
-			  <option value="2">02</option>
-			  <option value="3">03</option>
-			  <option value="4">04</option>
-			  <option value="5">05</option>
-			  <option value="6">06</option>
-			  <option value="7">07</option>
-			  <option value="8">08</option>
-			  <option value="9">09</option>
-			  <option value="10">10</option>
-			  <option value="11">11</option>
-			  <option value="12">12</option>
-			</select>
-			<select class="exp-y">
-			  <option selected disabled hidden>YYYY</option>
-			  <option value="2016">2016</option>
-			  <option value="2017">2017</option>
-			  <option value="2018">2018</option>
-			  <option value="2019">2019</option>
-			</select>
-		</div>
-		</div>
-		<br/>
-		<table id="order-table">
-			<tr><td colspan="2">Shipping:</td><td id="ship">N/A</td></tr>
-			<tr><td colspan="2">Tax</td><td id="tax">N/A</td></tr>
-			<tr><td colspan="2">Total:</td><td id="total">N/A</td></tr>
-		</table>
-		<div class="complete primary-button">Place Order</div>
 	</div>
+	<div class="center-main footer-filler"></div>
+	<div class="center-main footer-filler"></div>
 	<div class="template autoload" rel="footer"></div>
 </body>
 </html>

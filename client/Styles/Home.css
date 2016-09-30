@@ -1,0 +1,93 @@
+#column1, #column2{
+	width: 48%;
+}
+
+#column2{
+	float:right;
+}
+
+.showcase{
+	display: inline-block;
+    width: 100%;
+    height: 560px;
+    border: 2px solid rgb(222,167,57);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.thumbnails{
+	margin-top:0.5em;
+	text-align:center;
+}
+.thumbnails div {
+    height: 1.5em;
+    width: 1.5em;
+    display: inline-block;
+    border: 2px solid rgb(222,167,57);
+    margin-right: 0.5em;
+    background-position: center center;
+    background-size: cover;
+    opacity:0.6;
+    cursor:pointer;
+}
+.thumbnails div:hover{opacity:1.0;}
+.thumbnails div:last-of-type{margin-right:0px}
+
+.showcase .btn-fwd, .showcase .btn-back{
+	display: inline-block;
+    width: 15%;
+    height: 25%;
+    margin-top: 35%;
+    cursor: pointer;
+    display:none;
+    background-color:rgba(222,167,57,0.3);
+    background-image: url('../Images/left_arrow.png');
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size: 75% auto;
+    border-radius: 0px 15px 15px 0px;
+}
+.showcase .btn-fwd:hover, .showcase .btn-back:hover{
+	background-color:rgba(222,167,57,0.6);
+}
+.showcase .btn-fwd{
+	float:right;
+	background-image: url('../Images/right_arrow.png');
+	border-radius: 15px 0px 0px 15px;
+}
+
+#column2 h1{
+	margin:0px;
+	line-height:1em;
+}
+
+#column2 .btn-wrapper{text-align:right; width:100%;}
+
+#column2 .video{
+	border: 2px solid rgb(222,167,57);
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box; /* Firefox, other Gecko */
+	box-sizing: border-box;
+	width:100%;
+	height:330px;
+	background-image: url('../Images/Filler1.png');
+	background-size: cover;
+	margin-top: 1.5em;
+}
+
+.video .play-button{
+	background-color:rgba(255,255,255,0.2);
+	background-image: url('../Images/play_arrow.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+	height: 100%;
+	width: 100%;
+	opacity: 0.5;
+	cursor:pointer;
+}
+.video .play-button:hover{
+	background-color:rgba(255,255,255,0.1);
+	opacity:1.0;
+}
+

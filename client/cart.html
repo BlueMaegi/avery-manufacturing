@@ -12,20 +12,32 @@
 	<div class="template autoload" rel="navbar"></div>
 	<div class="center-main">
 		<h1>Cart Summary</h1>
-		<table id="cart-table">
-			<th colspan="2">Product</th>
-			<th>Quantity</th>
-			<th>Cost</th>
-			<th>Edit</th>
+		<table id="cart-table" class="data-table">
+			<tr>
+				<th colspan="2">Product</th>
+				<th>Quantity</th>
+				<th>Unit Price</th>
+				<th>Total</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr class="subtotal-row">
+				<td></td><td></td><td></td><td></td>
+				<td>
+					<div class="subtotal">
+					<span>$</span>
+					<span id="amount"></span>
+					</div>
+				</td><td></td>
+			</tr>
 		</table>
-		<div class="subtotal">
-			<span>Subtotal: $</span>
-			<span id="amount"></span>
+		
+		<div class="checkout-wrapper">
+			<a href="checkout.html" class="local-link">
+				<div class="checkout primary-button">Continue with Purchase</div>
+			</a>
 		</div>
-		<a href="checkout.html" class="local-link">
-			<div class="checkout primary-button">Continue with Purchase</div>
-		</a>
 	</div>
+	<div class="center-main footer-filler"></div>
 	<div class="template autoload" rel="footer"></div>
 </body>
 </html>

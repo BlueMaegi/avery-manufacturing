@@ -1,3 +1,56 @@
-table, #card-details{
-	color:black;
+#column1{
+	width: 60%;
+    margin-right: 1%;
+}
+
+#column2{
+	float: right;
+    border: 2px solid rgb(222,167,57);
+    width: 30%;
+    padding: 1%;
+    margin-top:1.5em
+}
+
+#column2 h2{
+	margin-top:0;
+}
+
+#order-table{width:100%;}
+
+#column2 td{
+	width:auto;
+}
+
+#column2 tr:last-of-type td{
+	padding: 1em 0;
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+#column2 .complete{
+	margin-top: 1em;
+    width: 100%;
+}
+
+input{
+	width:100%;
+}
+
+td:nth-of-type(2){width:12%;}
+td:nth-of-type(3){width:20%;}
+
+.no-shipping{
+	font-style: italic;
+    color: rgb(150,150,150);
+}
+
+#rates-table td{width:auto;}
+#rates-table tr td:first-of-type {
+    width: 2em;
+    text-align: left;
+    padding: 2px 0;
+}
+
+#rates-table span.days {
+    color: rgb(222,167,57);
 }
