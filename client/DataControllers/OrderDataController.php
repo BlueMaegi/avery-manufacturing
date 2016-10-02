@@ -10,7 +10,7 @@ try
 {
 	$command = ValidateRequest();
 
-	if($command == "get" && !isset($_POST['id']))
+	if($command == "get" && !isset($_POST['id'])  && !isset($_POST['groupBy']))
 	{
 		ValidateToken();
 		SetResult(ToJson(GetOrders()));
@@ -25,6 +25,20 @@ try
 			throw new Exception("Not Found", 404);
 	
 		SetResult(ToJson($item));
+	}
+	
+	if($command == "get" && isset($_POST['groupBy']) && isset($_POST['startDate']) && isset($_POST['endDate']))
+	{
+		$groupBy = SanitizeString($_POST['groupBy'], 6);
+		$startDate = SanitizeString($_POST['startDate'], 11);
+		$endDate = SanitizeString($_POST['endDate'], 11);
+		
+		$summary = GetOrderSummary($startDate, $endDate, $groupBy);
+	
+		if(!$summary)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($summary));
 	}
 
 	if($command == "create" && isset($_POST['order']))

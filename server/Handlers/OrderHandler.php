@@ -67,6 +67,63 @@ function DeleteOrder($orderId)
 	return true; //TODO: some sort of error handling?
 }
 
+function GetOrderSummary($startDate, $endDate, $groupBy)
+{
+	$baseItems = "YEAR(o.date) as year, SUM(p.price) as sales, SUM(oi.taxamount) as tax
+	FROM orderitems oi 
+	JOIN orders o on o.id = oi.orderId 
+	JOIN products p on p.id = oi.productid 
+	WHERE o.date BETWEEN ? AND ? ";
+	
+	$baseShip = "YEAR(o.date) as year, COALESCE(SUM(s.cost), 0) as ship, COALESCE(SUM(s.taxamount), 0) as shipTax
+	FROM orders o 
+	LEFT OUTER JOIN shipments s on s.orderid = o.id
+	WHERE o.date BETWEEN ? AND ? ";
+	
+	$groupClause = "";
+	$itemSelect = "";
+	$shipSelect = "";
+	$whereClause = "";
+	switch($groupBy)
+	{
+		case "day": 
+			$groupClause = "GROUP BY YEAR(o.date), MONTH(o.date), DAY(o.date)) ";
+			$shipSelect = "(SELECT MONTH(o.date) as month, DAY(o.date) as day, ";
+			$itemSelect = "(SELECT MONTH(o.date) as month, DAY(o.date) as day, o.date, ";
+			$whereClause = "AND ships.month = items.month AND ships.day = items.day;";
+			break;
+		case "month": 
+			$groupClause = "GROUP BY YEAR(o.date), MONTH(o.date)) ";
+			$shipSelect = "(SELECT MONTH(o.date) as month, ";
+			$itemSelect = "(SELECT CONCAT(MONTH(o.date),'-',YEAR(o.date)) as date, MONTH(o.date) as month, ";
+			$whereClause = "AND ships.month = items.month;";
+			break;
+		case "week": 
+			$groupClause = "GROUP BY YEAR(o.date), WEEK(o.date))";
+			$shipSelect = "(SELECT WEEK(o.date) as week, ";
+			$itemSelect = "(SELECT  WEEK(o.date) as week, 
+				DATE_SUB(DATE_ADD(MAKEDATE(YEAR(o.date), 1), INTERVAL WEEK(o.date) WEEK),
+  				INTERVAL WEEKDAY(DATE_ADD(MAKEDATE(YEAR(o.date), 1), INTERVAL WEEK(o.date) WEEK)) -1 DAY) as date,";
+  			$whereClause = "AND ships.week = items.week;";
+			break;
+	}
+	
+	$query = "SELECT items.date, items.sales, items.tax, ships.ship, ships.shipTax FROM 
+		".$itemSelect.$baseItems.$groupClause." as items JOIN ".$shipSelect.$baseShip.$groupClause." as ships 
+		ON ships.year = items.year ".$whereClause;
+		
+	connect_to_db();
+	$params[] = $startDate;
+	$params[] = $endDate;
+	$params[] = $startDate;
+	$params[] = $endDate;
+	$summary = false;
+	
+	$summary = do_query($query,"ssss", $params);
+	close_db();
+	return $summary;
+}
+
 function ValidateOrder($data)
 {
 	if(is_array($data))
