@@ -10,7 +10,7 @@ try
 {
 	$command = ValidateRequest();
 
-	if($command == "get" && !isset($_POST['id']))
+	if($command == "get" && !isset($_POST['id']) && !isset($_POST['orderId']))
 	{
 		ValidateToken();
 		SetResult(ToJson(GetShipments()));
@@ -21,6 +21,18 @@ try
 		ValidateToken();
 		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
 		$item = GetShipment($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+	
+	if($command == "get" && isset($_POST['orderId']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['orderId']));
+		$item = GetOrderShipments($id);
 	
 		if(!$item)
 			throw new Exception("Not Found", 404);

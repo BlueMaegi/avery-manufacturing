@@ -8,7 +8,7 @@ require_once(SERVROOT.'Lib/db_functions.php');
 function GetOrderItems($orderId)
 {
 	connect_to_db();
-	$orders = do_query("SELECT * FROM OrderItems WHERE OrderId = ?","i",array($orderId));
+	$orders = do_query("SELECT oi.*, p.Name as ProductName, p.Price FROM OrderItems oi JOIN Products p on p.Id = oi.ProductId WHERE oi.OrderId = ?","i",array($orderId));
 	close_db();
 	return $orders;
 }

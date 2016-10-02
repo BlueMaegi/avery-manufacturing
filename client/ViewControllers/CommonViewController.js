@@ -8,9 +8,13 @@ $(function(){
 	AutoloadTemplates(); 
 	var id = GetUrlParam('id');
 	AutoloadDataTemplates(id);
-	ParseTemplateLinks(document);
+	
 	//in case the page we're on doesn't need templates
 	if(ajaxLoadStack.length <= 0) PopPromise(); 
+	
+	$(window).on("loadscripts", function(){
+		ParseTemplateLinks(document);
+	});
 });
 
 function PushPromise()
@@ -32,7 +36,7 @@ function AutoloadTemplates()
 		PushPromise();
 		$.get(GetLocalUrl("Templates/"+$(ele).attr("rel")+".html"), function(data) {
 			$(ele).replaceWith(data);
-			ParseTemplateLinks(ele);
+			//ParseTemplateLinks(ele);
 			PopPromise();
 		});
 	});
@@ -80,8 +84,9 @@ function LoadDataTemplate(container, id)
 				$(container).append(inner);
 			});
 		}
-		ParseTemplateLinks(container);
-		PopPromise();
+		//ParseTemplateLinks(container);
+		if(ajaxLoadStack.length)
+			PopPromise();
 	});});
 }
 

@@ -1,8 +1,20 @@
 $(function(){
 	$(window).on("loadscripts", function(){
 		FormatDates();
+		orderId = GetUrlParam('id');
+		if(orderId)
+		{
+			LoadItemsTemplate();
+			LoadShipmentsTemplate();
+			if(!$(".data-template[rel='order']").hasClass('autoload'))
+			{
+				LoadDataTemplate($(".data-template[rel='order']"), orderId)
+			}
+		}
 	});
 });
+
+var orderId;
 
 function FormatDates()
 {
@@ -25,4 +37,60 @@ function FormatDates()
 		var formatted = month+ "/" +day+ "/" +year+ " " +hours+ ":" +minutes+ " "+ampm;
 		$(d).text(formatted);
 	});
+}
+
+function LoadItemsTemplate()
+{	
+	var authId = localStorage.getItem("id");
+	var tok = sessionStorage.getItem("tolkien");
+
+	$.get(GetLocalUrl("Templates/order-item.html"), function(template) {
+		Ajax("OrderItem", {"func":"get", "orderId":orderId, "authId":authId, "auth":tok}, function(data){
+			$(data).each(function(idx, o){
+				var inner = template;
+				var price = (parseFloat(o.price) * parseFloat(o.quantity)).toFixed(2);
+				inner = ParseObjectIntoTemplate(o, inner);
+				$("#order-item-table").prepend(inner);
+				$("#order-item-table .subtotal span").first().text(price);
+				RefreshPrices();
+			});
+		});
+	});
+}
+
+function LoadShipmentsTemplate()
+{
+	var authId = localStorage.getItem("id");
+	var tok = sessionStorage.getItem("tolkien");
+	
+	$.get(GetLocalUrl("Templates/order-shipment.html"), function(template) {
+		Ajax("Shipment", {"func":"get", "orderId":orderId, "authId":authId, "auth":tok}, function(data){
+			FormatDates();
+			$(data).each(function(idx, o){
+				var inner = template;
+				inner = ParseObjectIntoTemplate(o, inner);
+				$("#shipment-table").prepend(inner);
+				RefreshPrices();
+			});
+		});
+	});
+}
+
+function RefreshPrices()
+{
+	var taxTotal = 0;
+	var total = 0;
+	
+	$("td.tax").each(function(idx, p)
+	{
+		taxTotal += parseFloat($(p).attr("rel"));
+	});
+	
+	$("span.cost").each(function(idx, s)
+	{
+		total += parseFloat($(s).text());
+	});
+	
+	$("span.total-tax").text(taxTotal.toFixed(2));
+	$("span.total").text(total.toFixed(2));
 }

@@ -1,0 +1,38 @@
+<html>
+<head>
+	<title>Order Listing</title>
+	<link rel='shortcut icon' href='../Images/favicon.ico' type='image/x-icon'/ >
+	<script type="text/javascript" src="../JsLib/jquery-3.1.0.js"></script>
+	<script type="text/javascript" src="../ViewControllers/OrderViewController.js"></script>
+	<script type="text/javascript" src="../ViewControllers/CommonViewController.js"></script>
+	<script type="text/javascript" src="../ViewControllers/LoginViewController.js"></script>
+	<link rel="stylesheet" type="text/css" href="../Styles/Common.css">
+	<link rel="stylesheet" type="text/css" href="../Styles/Order.css">
+</head>
+<body>
+	<div class="template autoload" rel="navbar"></div>
+	<div class="center-main">
+		<h1>Order Detail</h1>
+		<div id="column1" class="data-template" rel="order"></div>
+		<div id="column2">
+			<h2>Items Purchased</h2>
+			<table id="order-item-table">
+			</table>
+			<h2>Shipments</h2>
+			<table id="shipment-table">
+			</table>
+			<h2>Totals</h2>
+			<p>Tax Collected: $<span class="total-tax"></span></p>
+			<p>Total Charged: $<span class="total"></span></p>
+		</div>
+		<h2>Operations</h2>
+		<input type="text" value="example@mail.com"/> <div class="secondary-button">Resend Receipt</div>
+		<br/>
+		<br/>
+		<input type="text" value="$0.00"/> <div class="secondary-button">Apply Refund</div>
+	</div>
+	<div class="center-main footer-filler"></div>
+	<div class="center-main footer-filler"></div>
+	<div class="template autoload" rel="footer"></div>
+</body>
+</html>

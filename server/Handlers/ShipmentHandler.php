@@ -21,6 +21,14 @@ function GetShipment($id)
 	return $shipment;
 }
 
+function GetOrderShipments($id)
+{
+	connect_to_db();
+	$shipment = do_query("SELECT * FROM Shipments WHERE OrderId = ?","i", array($id));
+	close_db();
+	return $shipment;
+}
+
 function CreateShipment($shipment)
 {
 	connect_to_db();
