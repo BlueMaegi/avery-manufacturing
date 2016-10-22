@@ -33,6 +33,8 @@ function CreateOrder($order)
 	if($existing)
 	{
 		$id = do_query("INSERT INTO Orders (CustomerId, StripeChargeId, Date) VALUES(?, ?, NOW())", "ss", $params);
+		$code = strtoupper(hash('crc32', $id));
+		do_query("UPDATE Orders SET Code = ? WHERE Id = ?", "si", array($code, $id));
 		$order = do_query("SELECT * FROM Orders WHERE Id = ?","i", array($id));
 	}
 	
@@ -87,19 +89,19 @@ function GetOrderSummary($startDate, $endDate, $groupBy)
 	switch($groupBy)
 	{
 		case "day": 
-			$groupClause = "GROUP BY YEAR(o.date), MONTH(o.date), DAY(o.date)) ";
+			$groupClause = "GROUP BY YEAR(o.date), MONTH(o.date), DAY(o.date) with rollup) ";
 			$shipSelect = "(SELECT MONTH(o.date) as month, DAY(o.date) as day, ";
 			$itemSelect = "(SELECT MONTH(o.date) as month, DAY(o.date) as day, o.date, ";
 			$whereClause = "AND ships.month = items.month AND ships.day = items.day;";
 			break;
 		case "month": 
-			$groupClause = "GROUP BY YEAR(o.date), MONTH(o.date)) ";
+			$groupClause = "GROUP BY YEAR(o.date), MONTH(o.date) with rollup) ";
 			$shipSelect = "(SELECT MONTH(o.date) as month, ";
 			$itemSelect = "(SELECT CONCAT(MONTH(o.date),'-',YEAR(o.date)) as date, MONTH(o.date) as month, ";
 			$whereClause = "AND ships.month = items.month;";
 			break;
 		case "week": 
-			$groupClause = "GROUP BY YEAR(o.date), WEEK(o.date))";
+			$groupClause = "GROUP BY YEAR(o.date), WEEK(o.date) with rollup)";
 			$shipSelect = "(SELECT WEEK(o.date) as week, ";
 			$itemSelect = "(SELECT  WEEK(o.date) as week, 
 				DATE_SUB(DATE_ADD(MAKEDATE(YEAR(o.date), 1), INTERVAL WEEK(o.date) WEEK),
