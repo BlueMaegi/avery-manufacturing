@@ -18,11 +18,14 @@ function SetupGallery(container, id)
 	g.idx = 0;
 	
 	setImage(g.idx);
+	setDimensions();
 	
 	for(var i = 0; i < g.totalImages; i++)
 	{
 		$('.thumbnails', container).append('<div rel="'+i+'" style="background-image:url(\''+g.thumbBase+i+'.jpg\');"></div>');
 	}
+	
+	$(window).resize(setDimensions);
 	
 	$('.thumbnails div').click(function(evt){
 		setImage($(evt.target).attr('rel'));
@@ -63,6 +66,12 @@ function SetupGallery(container, id)
 		$('.thumbnails div').css("opacity", "0.6");
 		$('.thumbnails div[rel="'+idx+'"]').css("opacity", "1.0");
 		g.idx = idx;
+	}
+	
+	function setDimensions()
+	{
+		var ratio = 1.80; //600px/333px
+		$('.showcase', container).height($('.showcase').width() * ratio);
 	}
 	
 	return g;

@@ -77,25 +77,30 @@ input[type='text'], textarea{
 }
 
 .navbar .header{
-	font-size: 2em;
+	background-color: rgb(222,167,57);
+	font-size: 2.5em;
     font-weight: bold;
-    line-height: 0.5em;
+    line-height: 0em;
     letter-spacing: 0.2em;
-	color:black;
-	height:2.5em;
-	border: 2px solid rgb(222,167,57);
+    color: black;
+    height: 1.5em;
+    border: 2px solid rgb(222,167,57);
 }
 
-.navbar .header p {margin-left: 0.5em; display:inline-block;}
+.navbar .header p {
+	margin-left: 0.5em;
+    margin-top: 0.75em;
+    display: inline-block;
+}
 
 .navbar .logo{
-	height: 2em;
-	width: 4em;
-	float: right;
-	background-image: url("../Images/Logo.png");
-	background-size: contain;
-	background-repeat: no-repeat;
-    margin: 0.25em 0.5em;
+	height: 1.3em;
+    width: 3.5em;
+    float: right;
+    background-image: url("../Images/Logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 0.1em 0em;
 }
 
 .nav-links{
@@ -111,6 +116,8 @@ input[type='text'], textarea{
 .nav-links a:hover{
 	color:black;
 }
+
+.nav-links .logout{float:right;}
 
 .navbar a.cart-icon{
 	padding: 0;
