@@ -7,6 +7,7 @@ $(function(){
 		SetupLogoutForm();
 		setInterval(Refresh, 5000);
 		if(!HasToken() || TokenExpired()) Logout();
+		SetupNavBar();
 	});
 });
 
@@ -40,6 +41,16 @@ function SetupLoginForm(container)
 function SetupLogoutForm()
 {
 	$(".logout").click(Logout);
+}
+
+function SetupNavBar()
+{
+	var dashLink = GetLocalUrl("admin/index.html");
+	var ordersLink = GetLocalUrl("admin/orders.html");
+	$('.nav-links a:last-child').before("<a href='"+dashLink+"' class='local-link'>Dashboard</a>");
+	$('.nav-links a:last-child').before("<a href='"+ordersLink+"' class='local-link'>Orders</a>");
+	$('.nav-links').append("<a class='local-link logout'>Logout</a>");
+	$('.nav-links .logout').click(Logout);
 }
 
 function SetToken(data)
