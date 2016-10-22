@@ -3,14 +3,18 @@
 	<title>Dashboard</title>
 	<link rel='shortcut icon' href='../Images/favicon.ico' type='image/x-icon'/ >
 	<script type="text/javascript" src="../JsLib/jquery-3.1.0.js"></script>
+	<script type="text/javascript" src="../JsLib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="../ViewControllers/CommonViewController.js"></script>
 	<script type="text/javascript" src="../ViewControllers/LoginViewController.js"></script>
 	<script type="text/javascript" src="../ViewControllers/DashboardViewController.js"></script>
 	<link rel="stylesheet" type="text/css" href="../Styles/Common.css">
+	<link rel="stylesheet" type="text/css" href="../Styles/Dashboard.css">
 </head>
 <body>
 	<div class="template autoload" rel="navbar"></div>
 	<div class="center-main">
+		<div id="column1">
+		<h1>Activity Summary</h1>
 		<table id="summary-table" class="data-table">
 			<tr>
 				<th>Period</th>
@@ -21,7 +25,25 @@
 				<th>Refunds</th>
 			</tr>
 		</table>
+		</div>
+		<div id="column2">
+			<p>Start Date: </p>
+			<input type="text" id="start-datepicker">
+			
+			<p>End Date: </p>
+			<input type="text" id="end-datepicker">
+			
+			<p>View By:
+				<select class="group">
+					<option selected value="month">Month</option>			
+					<option value="week">Week</option>			
+					<option value="day">Day</option>
+				</select>
+			</p>
+			<div class="refresh primary-button">Refresh</div>
+		</div>
 	</div>
+	<div class="center-main footer-filler"></div>
 	<div class="template autoload" rel="footer"></div>
 </body>
 </html>
