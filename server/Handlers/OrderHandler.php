@@ -8,7 +8,18 @@ require_once(SERVROOT.'Lib/db_functions.php');
 function GetOrders()
 {
 	connect_to_db();
-	$orders = do_query("SELECT o.*, c.Name FROM Orders o JOIN Customers c on c.Id = o.CustomerId","","");
+	$orders = do_query("SELECT o.*, c.Name,
+		CASE WHEN three.id IS NOT NULL THEN 'Error'
+			WHEN one.id IS NOT NULL THEN 'In-Progress'
+			WHEN zero.id IS NOT NULL THEN 'New'
+			WHEN two.id IS NOT NULL THEN 'Shipped'
+			ELSE 'None'
+		END AS 'status' 
+		FROM Orders o JOIN Customers c on c.Id = o.CustomerId
+		LEFT OUTER JOIN Shipments zero on zero.OrderId = o.id and zero.status = 0
+		LEFT OUTER JOIN Shipments one on one.OrderId = o.id and one.status = 1
+		LEFT OUTER JOIN Shipments two on two.OrderId = o.id and two.status = 2
+		LEFT OUTER JOIN Shipments three on three.OrderId = o.id and three.status = 3","","");
 	close_db();
 	return $orders;
 }

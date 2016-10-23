@@ -39,6 +39,26 @@ function FormatDates()
 	});
 }
 
+function FormatStatus()
+{
+	$('.status').each(function(idx, s){
+		var status = parseInt($(s).text());
+		var statusText = "";
+		switch(status){
+			case 0: statusText = "New";
+				break;
+			case 1: statusText = "In-Progress";
+				break;
+			case 2: statusText = "Shipped";
+				break;
+			case 3: statusText = "Error";
+				break;	
+		}
+		
+		$(s).text(statusText);
+	});
+}
+
 function LoadItemsTemplate()
 {	
 	var authId = localStorage.getItem("id");
@@ -71,6 +91,7 @@ function LoadShipmentsTemplate()
 				inner = ParseObjectIntoTemplate(o, inner);
 				$("#shipment-table").prepend(inner);
 				RefreshPrices();
+				FormatStatus();
 			});
 		});
 	});
