@@ -82,6 +82,32 @@ function DeleteShipment($id)
 	return true; //TODO: some sort of error handling?
 }
 
+function GetPrintableShipments()
+{
+	connect_to_db();
+	$cutoff = date("Y-m-d", strtotime("-4 week"));
+	do_query("UPDATE Shipments s JOIN Orders o ON s.orderId = o.id SET s.status = 3 WHERE s.status = 0 and o.date < ?", "s", array($cutoff));
+	do_query("UPDATE Shipments s JOIN Orders o ON s.orderId = o.id SET s.status = 4 WHERE s.status = 1 and o.date < ?", "s", array($cutoff));
+	$shipments = do_query("SELECT Id, RateType, OrderId FROM Shipments WHERE status = 0","","");
+	do_query("UPDATE Shipments SET status = 1 WHERE status = 0", "", "");
+	close_db();
+	
+	return $shipments;
+}
+
+function MarkComplete($id)
+{
+	connect_to_db();
+	$existing = do_query("SELECT * FROM Shipments WHERE id = ?","i", array($id));
+	if($existing)
+	{	
+		do_query("UPDATE Shipments SET Status = 2 WHERE Id = ?","i", array($id));
+	}
+	close_db();
+	
+	return ($existing)? true : false;
+}
+
 function ValidateShipment($data)
 {
 	if(is_array($data))

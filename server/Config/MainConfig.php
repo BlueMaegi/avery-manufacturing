@@ -15,6 +15,8 @@ define("EASYPOST_KEY", "AuVkoSic1MsNOsyB8aK9UA");
 define("STRIPE_KEY", 'sk_test_TD3vu14u4eVIBbDUfQ0kKWc5');
 //define("STRIPE_KEY", 'sk_test_DwTrW0asvdfn4ujyMJcIAimy'); //DO NOT USE, THIS IS GAVANT'S
 
+define("POWERSHELL_SECRET", "ocarinaoftime");
+
 const TRANSACTIONS = array('Add_Inventory' => 1, "Sale" => 2, "Return" => 3);
 
 ?>
