@@ -90,6 +90,7 @@ input[type='text'], textarea{
 .navbar .header p {
 	margin-left: 0.5em;
     margin-top: 0.75em;
+    line-height: 0;
     display: inline-block;
 }
 
