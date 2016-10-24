@@ -1,50 +1,9 @@
-←
-phpMyAdmin
-HomephpMyAdmin documentationDocumentationReload navigation panel
-RecentFavorites
-Collapse allUnlink from main panel
-New
-Database operationsAveryManufacturing
-NewNew
-Expand/CollapseStructureClients
-Expand/CollapseStructureCustomers
-Expand/CollapseStructureInventory
-Expand/CollapseStructureInventoryHistory
-Expand/CollapseStructureLocations
-Expand/CollapseStructureOrderItems
-Expand/CollapseStructureOrders
-Expand/CollapseStructureProducts
-Expand/CollapseStructureShipments
-Expand/CollapseDatabase operationsinformation_schema
-Expand/CollapseDatabase operationsmysql
-Expand/CollapseDatabase operationsperformance_schema
-Server: localhost:8889 »Database: AveryManufacturing
-Structure Structure
-SQL SQL
-Search Search
-Query Query
-Export Export
-Import Import
-Operations Operations
-Privileges Privileges
-Routines Routines
-Events Events
-More
-Click on the bar to scroll to top of page
-SQL Query ConsoleConsole
-OptionsSet default
-Always expand query messages
-Show query history at start
-Show current browsing query
-[ Back ]
-
-
 -- phpMyAdmin SQL Dump
 -- version 4.4.10
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:8889
--- Generation Time: Sep 19, 2016 at 04:10 AM
+-- Generation Time: Oct 24, 2016 at 04:34 AM
 -- Server version: 5.5.42
 -- PHP Version: 5.6.10
 
@@ -61,11 +20,12 @@ SET time_zone = "+00:00";
 -- Table structure for table `Clients`
 --
 
+DROP TABLE IF EXISTS `Clients`;
 CREATE TABLE `Clients` (
   `Id` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL,
   `Creds` varchar(150) NOT NULL,
-  `Token` varchar(200) DEFAULT NULL
+  `Token` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -74,6 +34,7 @@ CREATE TABLE `Clients` (
 -- Table structure for table `Customers`
 --
 
+DROP TABLE IF EXISTS `Customers`;
 CREATE TABLE `Customers` (
   `Id` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL,
@@ -94,11 +55,12 @@ CREATE TABLE `Customers` (
 -- Table structure for table `Inventory`
 --
 
+DROP TABLE IF EXISTS `Inventory`;
 CREATE TABLE `Inventory` (
   `Id` int(11) NOT NULL,
   `ProductId` int(11) NOT NULL,
   `LocationId` int(11) NOT NULL,
-  `Quantity` int(11) NOT NULL
+  `Quantity` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -107,12 +69,13 @@ CREATE TABLE `Inventory` (
 -- Table structure for table `InventoryHistory`
 --
 
+DROP TABLE IF EXISTS `InventoryHistory`;
 CREATE TABLE `InventoryHistory` (
   `Id` int(11) NOT NULL,
   `InventoryId` int(11) NOT NULL,
   `Date` datetime NOT NULL,
   `EventType` int(11) NOT NULL,
-  `Quantity` int(11) NOT NULL
+  `Quantity` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -121,6 +84,7 @@ CREATE TABLE `InventoryHistory` (
 -- Table structure for table `Locations`
 --
 
+DROP TABLE IF EXISTS `Locations`;
 CREATE TABLE `Locations` (
   `Id` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL,
@@ -139,12 +103,13 @@ CREATE TABLE `Locations` (
 -- Table structure for table `OrderItems`
 --
 
+DROP TABLE IF EXISTS `OrderItems`;
 CREATE TABLE `OrderItems` (
   `OrderId` int(11) NOT NULL,
   `ProductId` int(11) NOT NULL,
   `Quantity` int(11) NOT NULL,
-  `TaxAmount` decimal(10,2) NOT NULL,
-  `Discount` decimal(10,2) DEFAULT NULL,
+  `TaxAmount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Discount` decimal(10,2) DEFAULT '0.00',
   `ShipmentId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -154,11 +119,14 @@ CREATE TABLE `OrderItems` (
 -- Table structure for table `Orders`
 --
 
+DROP TABLE IF EXISTS `Orders`;
 CREATE TABLE `Orders` (
   `Id` int(11) NOT NULL,
+  `Code` varchar(10) DEFAULT NULL,
   `Date` datetime NOT NULL,
   `CustomerId` int(11) NOT NULL,
-  `StripeChargeId` varchar(100) DEFAULT NULL
+  `StripeChargeId` varchar(100) DEFAULT NULL,
+  `RefundAmount` decimal(10,2) NOT NULL DEFAULT '0.00'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -167,11 +135,13 @@ CREATE TABLE `Orders` (
 -- Table structure for table `Products`
 --
 
+DROP TABLE IF EXISTS `Products`;
 CREATE TABLE `Products` (
   `Id` int(11) NOT NULL,
   `Name` varchar(100) NOT NULL,
   `Description` varchar(500) DEFAULT NULL,
-  `Price` decimal(10,2) NOT NULL,
+  `Price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Enabled` tinyint(1) NOT NULL DEFAULT '1',
   `EpParcelId` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -181,12 +151,13 @@ CREATE TABLE `Products` (
 -- Table structure for table `Shipments`
 --
 
+DROP TABLE IF EXISTS `Shipments`;
 CREATE TABLE `Shipments` (
   `Id` int(11) NOT NULL,
   `RateType` varchar(25) NOT NULL,
-  `Cost` decimal(10,2) NOT NULL,
-  `TaxAmount` decimal(10,2) NOT NULL,
-  `Status` int(3) NOT NULL,
+  `Cost` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `TaxAmount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Status` int(3) NOT NULL DEFAULT '0',
   `OrderId` int(11) NOT NULL,
   `EpLabelId` varchar(100) DEFAULT NULL,
   `EpShipmentId` varchar(100) DEFAULT NULL
@@ -337,7 +308,3 @@ ALTER TABLE `Orders`
 --
 ALTER TABLE `Shipments`
   ADD CONSTRAINT `fk_Shipment_Order` FOREIGN KEY (`OrderId`) REFERENCES `Orders` (`Id`);
-
-[ Back ]
-
-Open new phpMyAdmin window

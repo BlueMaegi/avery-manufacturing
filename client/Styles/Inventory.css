@@ -1,0 +1,25 @@
+#column1, #column2{
+	margin-top:1.5em;
+}
+
+#column1{width:70%;}
+#column2{width: 20%; float: right;}
+
+#inventory-table{margin-top:1em;}
+
+#inventory-table tr td:nth-child(3), #inventory-table tr td:nth-child(4),
+#inventory-table tr th:nth-child(3), #inventory-table tr th:nth-child(4)
+{text-align:center;}
+
+
+#inventory-table .quantity{
+	width: 3em;
+    line-height: 0.5em;
+    text-align: center;
+    position: relative;
+    top: 1px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#column2 .primary-button{margin-top:3em; width:100%;}

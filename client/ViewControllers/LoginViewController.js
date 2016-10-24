@@ -47,8 +47,10 @@ function SetupNavBar()
 {
 	var dashLink = GetLocalUrl("admin/index.html");
 	var ordersLink = GetLocalUrl("admin/orders.html");
+	var inventoryLink = GetLocalUrl("admin/inventory.html");
 	$('.nav-links a:last-child').before("<a href='"+dashLink+"' class='local-link'>Dashboard</a>");
 	$('.nav-links a:last-child').before("<a href='"+ordersLink+"' class='local-link'>Orders</a>");
+	$('.nav-links a:last-child').before("<a href='"+inventoryLink+"' class='local-link'>Inventory</a>");
 	$('.nav-links').append("<a class='local-link logout'>Logout</a>");
 	$('.nav-links .logout').click(Logout);
 }

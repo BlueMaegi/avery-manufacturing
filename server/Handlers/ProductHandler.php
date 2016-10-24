@@ -46,9 +46,10 @@ function UpdateProduct($product)
 		$params[] = $product["description"];
 		$params[] = $product["price"];
 		$params[] = $product["epParcelId"];
+		$params[] = $product["enabled"];
 		$params[] = $product["id"];	
 		
-		do_query("UPDATE Products SET Name = ?, Description = ?, Price = ?, EpParcelId = ? WHERE Id = ?","ssssi", $params);
+		do_query("UPDATE Products SET Name = ?, Description = ?, Price = ?, EpParcelId = ?, Enabled = ? WHERE Id = ?","ssssii", $params);
 	}
 	close_db();
 	
@@ -80,6 +81,7 @@ function ValidateProduct($data)
 		$product = "";
 		$product["description"] = null;
 		$product["epParcelId"] = null;
+		$product["enabled"] = 0;
 		$product['id'] = null;
 		
 		if(array_key_exists("id", $data))
@@ -92,6 +94,8 @@ function ValidateProduct($data)
 			$product["price"] = ValidateFloatParam($data["price"]);
 		if(array_key_exists("epParcelId", $data))
 			$product["epParcelId"] = SanitizeString($data["epParcelId"], 100);
+		if(array_key_exists("enabled", $data))
+			$product["enabled"] = ValidateIntParam($data["enabled"]);
 				
 		if(array_key_exists("name", $product) && array_key_exists("price", $product) 
 			&& array_key_exists("description", $product))

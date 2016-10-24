@@ -8,7 +8,9 @@ require_once(SERVROOT.'Lib/db_functions.php');
 function GetInventory($locationId)
 {
 	connect_to_db();
-	$inventory = do_query("SELECT * FROM Inventory WHERE LocationId = ?","i",array($locationId));
+	$inventory = do_query("SELECT i.*, p.name, p.price, p.description, p.epParcelId,
+		 		CASE WHEN p.enabled = '1' THEN 'checked' ELSE '' END AS 'enabled'
+				FROM Inventory i JOIN Products p ON p.id = i.productId WHERE i.LocationId = ?","i",array($locationId));
 	close_db();
 	return $inventory;
 }
