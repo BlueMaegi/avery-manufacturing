@@ -1,18 +1,5 @@
 h1{margin: 0.5em 0;}
 
-#cart-table{
-	width:100%;
-}
-
-.plus, .minus{
-	width: 1.5em;
-	-webkit-touch-callout: none; /* iOS Safari */
-  	-webkit-user-select: none;   /* Chrome/Safari/Opera */
-  	-khtml-user-select: none;    /* Konqueror */
-  	-moz-user-select: none;      /* Firefox */
-  	-ms-user-select: none;
-}
-
 #cart-table .quantity{
 	width: 2em;
     line-height: 1.9em;
@@ -23,9 +10,13 @@ h1{margin: 0.5em 0;}
     padding-right: 0px;
 }
 
+.plus, .minus{
+	width: 1.5em;
+}
+
 #cart-table th:first-of-type{width:35%;}
 #cart-table th:nth-child(2){width:20%;}
-
+#cart-table td {padding:0;}
 #cart-table input{background-color:white;}
 
 .empty-cart{color:black;}

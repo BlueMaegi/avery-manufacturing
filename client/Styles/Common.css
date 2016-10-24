@@ -70,6 +70,14 @@ input[type='text'], textarea{
 	color:black;
 }
 
+.plus, .minus{
+	-webkit-touch-callout: none; /* iOS Safari */
+  	-webkit-user-select: none;   /* Chrome/Safari/Opera */
+  	-khtml-user-select: none;    /* Konqueror */
+  	-moz-user-select: none;      /* Firefox */
+  	-ms-user-select: none;
+}
+
 
 /************************* Navbar ***********************/
 .navbar{
@@ -191,6 +199,7 @@ table.form-table tr:nth-child(even) td{
 /***************************** Data Tables ********************/
 table.data-table{
 	border-collapse:collapse;
+	width:100%;
 }
 
 table.data-table tr:nth-child(1){
@@ -209,6 +218,7 @@ table.data-table th:nth-child(1){
 
 table.data-table td {
     border-bottom: 1px solid rgb(220,220,220);
+    padding:0.5em;
 }
 
 
