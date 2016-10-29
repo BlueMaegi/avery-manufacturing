@@ -80,7 +80,6 @@ function SetupShipping(container)
 		
 		if(param.length > 0 || evt.target.hasClass('company')) 
 			CheckAndSendValues();
-		//else throw error
 		//todo: basic sanitization
 	});
 	
@@ -104,11 +103,11 @@ function SetupShipping(container)
 			"phone":shipment.phoneField.val()
 		};
 		
+		RemoveError();
 		Ajax("Purchase", {"func":"shipping", "address":address}, function(data){
 			//TODO: show a loading spinner
-			//TODO: catch 400 errors and display invalid address message
 			SetupRates(data);
-		});
+		}, $("#column1 h2:nth-of-type(1)"));
 	}
 	
 	function SetupRates(addressId)
@@ -193,6 +192,7 @@ function SetupCard(container)
 		
 		if(!allReady) return; //todo: alert the user
 		
+		RemoveError();
 		Stripe.card.createToken({
 		  number: card.numberField.val(),
 		  cvc: card.cscField.val(),
@@ -203,7 +203,7 @@ function SetupCard(container)
 			//TODO: show a loading spinner
 			if(cardResult.error)
 			{
-				//do something with cardResult.error.message;
+				ShowError("Error: "+cardResult.error.message, $("#column1 h2:nth-of-type(3)"));
 			}
 			else
 				card.id = cardResult["id"];
@@ -215,8 +215,27 @@ function SetupCard(container)
 
 function CompletePurchase()
 {
-	if(cart == null || keys.length <= 0) return; //TODO: display errors?
-	if(!shipmentObj.rateSelected || !card.id) return;
+	RemoveError();
+	if(cart == null || keys.length <= 0) 
+	{
+		ShowError("Error: Your cart is empty. You cannot complete a purchase with nothing in your cart.");
+		return; 
+	}
+	if(rates.length <= 0)
+	{
+		ShowError("Please enter your shipping address before you place your order.",$("#column1 h2:nth-of-type(1)"));
+		return;
+	}
+	if(!shipmentObj.rateSelected)
+	{
+		ShowError("Please select a shipping method before you place your order.", $("#column1 h2:nth-of-type(2)"));
+		return;
+	}
+	if(!card.id) 
+	{
+		ShowError("Please enter a valid payment card to complete your order.", $("#column1 h2:nth-of-type(3)"));
+		return;
+	}
 	
 	var selectedRate = $("input[value='"+shipmentObj.rateId+"']").siblings();
 	
@@ -235,6 +254,7 @@ function CompletePurchase()
 	Ajax("Purchase", {"func":"complete", "purchase":purchase}, function(data){
 		console.log(data);
 		//TODO: clear cart cookie
+		//TODO: navigate to receipt page
 	});
 }
 

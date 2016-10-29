@@ -112,15 +112,34 @@ function ParseTemplateLinks(container)
 	});
 }
 
-function Ajax(object, dataSet, callback)
+function Ajax(object, dataSet, callback, errorSelector)
 {
 	//TODO: catch 404 and 403 and reroute...perhaps others too
 
 	$.ajax({
 	  url: GetLocalUrl("DataControllers/"+object+"DataController.php"),
 	  method: "POST",
-	  data: dataSet
+	  data: dataSet,
+	  error: function(xhr, options, error){
+	  	if(xhr.status == 404)
+	  	{
+	  		window.location.href = GetLocalUrl("404.html");
+	  	}
+	  	else if(xhr.status == 403)
+	  	{
+	  		console.log("403 forbidden. Need to redirect to 403 page.");
+	  	}
+	  	else if(xhr.status == 400)
+	  	{
+	  		ShowError("Error: "+error, errorSelector);
+	  	}
+	  	else
+	  	{
+	  		ShowError("Something went wrong in processing this page. Please try again later. If this problem persists, please contact us.");
+	  	}
+	  }
 	}).done(function(data){
+		//console.log(data);
 		if(!data || data.length <= 0)
 		{
 			callback(false);
@@ -130,6 +149,21 @@ function Ajax(object, dataSet, callback)
 		if(result.hasOwnProperty("data")) callback(result.data);
 		else callback(result);
 	});
+}
+
+function ShowError(message, selector)
+{
+	$('html, body').animate({scrollTop: '0px'}, 300);
+	$(".error-message").text(message);
+	$(".error-message").slideDown("slow");
+	$(selector).addClass("error-red");
+}
+
+function RemoveError()
+{
+	$(".error-message").empty();
+	$(".error-message").hide();
+	$(".error-red").removeClass("error-red");
 }
 	
 function GetUrlParam(name){

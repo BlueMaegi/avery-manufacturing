@@ -4,6 +4,7 @@
 	<link rel='shortcut icon' href='Images/favicon.ico' type='image/x-icon'/ >
 	<script type="text/javascript" src="JsLib/jquery-3.1.0.js"></script>
 	<script type="text/javascript" src="ViewControllers/CommonViewController.js"></script>
+	<script type="text/javascript" src="ViewControllers/ContactViewController.js"></script>
 	<link rel="stylesheet" type="text/css" href="Styles/Common.css">
 	<link rel="stylesheet" type="text/css" href="Styles/Contact.css">
 </head>
@@ -11,6 +12,7 @@
 	<div class="template autoload" rel="navbar"></div>
 	<div class="center-main">
 		<div id="column1">
+			<p class="error-message"></p>
 			<h1>Contact Us</h1>
 			<p class="description">Have questions, comments, or suggestions? Drop us a line and we'll get back to you as soon as we can.</p>
 			<table class="form-table">
@@ -19,23 +21,23 @@
 					<td>Email:</td>
 				</tr>
 				<tr class="details-input">
-					<td><input type="text"></td>
-					<td><input type="text"></td>
+					<td><input type="text" class="name"></td>
+					<td><input type="text" class="email"></td>
 				</tr>
 				<tr class="message">
 					<td colspan="2">Message:</td>
 				</tr>
 				<tr class="message-input">
-					<td colspan="2"><textarea rows="7"></textarea></td>
+					<td colspan="2"><textarea rows="7" class="message"></textarea></td>
 				</tr>
 				<tr class="robot">
 					<td>Are you human? Type the letter C four times:</td>
 				</tr>
 				<tr class="robot-input">
-					<td><input type="text"></td>
+					<td><input type="text" class="verification"></td>
 				</tr>
 				<tr>
-					<td>&nbsp;</td>
+					<td><div class="title thanks" style="display:none;">Thank You!</div></td>
 					<td><div class="primary-button">Send</div></td>
 				</tr>	
 			</table>

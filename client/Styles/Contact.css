@@ -24,6 +24,8 @@ tr.robot-input td{padding-bottom:0;}
 
 input, textarea{width:100%;}
 
+.thanks{ text-align:center; font-size:16pt;}
+
 td div.primary-button{
 	float:right;
 	padding-left:3em;
