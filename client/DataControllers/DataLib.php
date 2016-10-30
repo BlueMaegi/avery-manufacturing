@@ -81,6 +81,9 @@ function ToJson($resultSet)
 
 function ReturnError($code, $message)
 {
+	if($code != 400 && $code != 403 && $code != 404)
+		$code = 500;
+		
 	header($_SERVER["SERVER_PROTOCOL"]." ".$code." ".$message, true, $code);
 }
 

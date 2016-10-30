@@ -65,51 +65,57 @@ try
 		$shipment = CreateShipment($purchase['shipment'])[0];
 		
 		$totalCharge = $purchase['shipment']['taxAmount'] + $purchase['shipment']['cost'];
-			
+		
+		$sufficientStock = true;	
 		foreach($purchase['orderItems'] as $item)
 		{
 			$item['orderId'] = $order['id'];
 			$item['shipmentId'] = $shipment['id'];
-			$inventoryList = GetInventoryByProduct($item['productId']);
 			$product = GetProduct($item['productId'])[0];
-			$currIdx = 0;
-			$remainingQty = $item['quantity'];
-		
-			while($remainingQty > 0)
-			{
-				$inventory = $inventoryList[$currIdx];
-				if($inventory['quantity'] > 0)
-				{
-					$toSubtract = min($inventory['quantity'], $remainingQty);
-					$inventory['quantity'] -= $toSubtract;
-					$inventory['locationId'] = $inventory['locationid'];//quick hack
-					$inventory['productId'] = $inventory['productid'];
-					UpdateInventoryItem($inventory);
-					$remainingQty -= $toSubtract;
-				
-					$history['inventoryId'] = $inventory['id'];
-					$history['quantity'] = $toSubtract;
-					$history['eventType'] = TRANSACTIONS['Sale'];
-					$hist = CreateHistory($history);
-				}
-				else
-					$currIdx ++;
-			}
-
-			$item['taxAmount'] = $product['price'] * $taxRate;
+	
+			if(!CheckInventoryExists($item['productId'], $item['quantity']))
+				$sufficientStock = false;
+			
+			$item['taxAmount'] = $product['price'] * $taxRate * $item['quantity'];
 			$totalCharge += $product['price'] + $item['taxAmount'];
 			$newItem = CreateOrderItem($item);
 		}
 		
-		$stripeId = CreateCharge($purchase['cardId'], $totalCharge);
-		$order['stripeChargeId'] = $stripeId;
-		UpdateOrder($order);
+		if($sufficientStock)
+		{
+			$stripeId = CreateCharge($purchase['cardId'], $totalCharge, true);
+			$order['stripeChargeId'] = $stripeId;
+			UpdateOrder($order);
+			foreach($purchase['orderItems'] as $item)
+				ProcessInventory($order['id'], $item['productId']);
+		}
+		else
+		{
+			$stripeId = CreateCardCustomer($purchase['cardId']);
+			$customer['stripeCustomerId'] = $stripeId;
+			UpdateCustomer($customer);
+			$shipment['status'] = 5;
+			UpdateShipment($shipment);		
+		}
 		
 		$label = PurchaseLabel($shipment['eplabelid'], $shipment['epshipmentid']);
 		SaveLabelImage($shipment['id'], $label);
 		
 		//TODO: send receipt email	
 		SetResult(json_encode($totalCharge));	
+	}
+	
+	if($command == "backorder" && isset($_POST['orderId']))
+	{
+		//check order exists & sufficient inventory
+		//calculate charge amount
+			//shipping + ship tax
+			//(product price * quantity) + orderItem tax
+		//charge stripe
+		//update order with charge ID
+		//process inventory
+		//update shipment to status 0
+		
 	}
 
 	ReturnResult();
@@ -120,6 +126,38 @@ catch(Exception $e)
 }
 
 
+function ProcessInventory($orderId, $productId)
+{
+	$item = GetOrderItem($orderId, $productId)[0];
+	$inventoryList = GetInventoryByProduct($productId);
+	$currIdx = 0;
+	$inStock = 0;
+	$remainingQty = $item['quantity'];
+	
+	if(!CheckInventoryExists($productId, $item['quantity']))
+		throw new Exception("Insufficient inventory", 500);
+
+	while($remainingQty > 0 && $inventoryList[$currIdx])
+	{
+		$inventory = $inventoryList[$currIdx];
+		if($inventory['quantity'] > 0)
+		{
+			$toSubtract = min($inventory['quantity'], $remainingQty);
+			$inventory['quantity'] -= $toSubtract;
+			$inventory['locationId'] = $inventory['locationid'];//quick hack
+			$inventory['productId'] = $inventory['productid'];
+			UpdateInventoryItem($inventory);
+			$remainingQty -= $toSubtract;
+		
+			$history['inventoryId'] = $inventory['id'];
+			$history['quantity'] = $toSubtract;
+			$history['eventType'] = TRANSACTIONS['Sale'];
+			$hist = CreateHistory($history);
+		}
+		else
+			$currIdx ++;
+	}
+}
 
 
 function ValidatePurchase($data)
@@ -173,8 +211,6 @@ function ValidatePurchaseProducts($items)
 		if(!CheckProductExists($i['productId']))
 			return false;
 			
-		if(!CheckInventoryExists($i['productId'], $i['quantity']))
-			return false;
 	}
 	
 	return true;

@@ -62,7 +62,6 @@ function UpdateOrder($order)
 	{
 		$params[] = $order["stripeChargeId"];
 		$params[] = $order["id"];	
-		var_dump($params);
 		
 		do_query("UPDATE Orders SET StripeChargeId = ? WHERE Id = ?","si", $params);
 	}

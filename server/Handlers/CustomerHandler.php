@@ -33,9 +33,10 @@ function CreateCustomer($customer)
 	$params[] = $customer["lastFour"];
 	$params[] = $customer["phone"];
 	$params[] = $customer["epAddressId"];
+	$params[] = $customer["stripeCustomerId"];
 	
-	$id = do_query("INSERT INTO Customers (Name, Email, Address, City, State, Zip, LastFour, Phone, EpAddressId, DateCreated)
-	 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", "sssssisss", $params);
+	$id = do_query("INSERT INTO Customers (Name, Email, Address, City, State, Zip, LastFour, Phone, EpAddressId, StripeCustomerId, DateCreated)
+	 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", "sssssissss", $params);
 	$customer = do_query("SELECT * FROM Customers WHERE Id = ?","i", array($id));
 
 	return $customer;
@@ -56,11 +57,12 @@ function UpdateCustomer($customer)
 		$params[] = $customer["zip"];
 		$params[] = $customer["lastFour"];
 		$params[] = $customer["phone"];
-		$params[] = $customer["EpAddressId"];
+		$params[] = $customer["epAddressId"];
+		$params[] = $customer["stripeCustomerId"];
 	  	$params[] = $customer["id"];	
 		
 		do_query("UPDATE Customers SET Name = ?, Email = ?, Address = ?, City = ?, State = ?,
-		Zip = ?, LastFour = ?, Phone = ?, EpAddressId = ? WHERE Id = ?","ssssssissi", $params);
+		Zip = ?, LastFour = ?, Phone = ?, EpAddressId = ?, StripeCustomerId = ? WHERE Id = ?","ssssssisssi", $params);
 	}
 	close_db();
 	
@@ -82,6 +84,7 @@ function ValidateCustomer($data)
 		$customer = "";
 		$customer["id"] = null;
 		$customer["epAddressId"] = null;
+		$customer["stripeCustomerId"] = null;
 		
 		if(array_key_exists("id", $data) && ValidateIntParam($data["id"]))
 			$customer["id"] = ValidateIntParam($data["id"]);
@@ -103,6 +106,8 @@ function ValidateCustomer($data)
 			$customer["phone"] = SanitizeString($data["phone"], 10);
 		if(array_key_exists("epAddressId", $data))
 			$customer["epAddressId"] = SanitizeString($data["epAddressId"], 100);
+		if(array_key_exists("stripeCustomerId", $data))
+			$customer["stripeCustomerId"] = SanitizeString($data["stripeCustomerId"], 100);
 				
 		if(array_key_exists("name", $customer) && array_key_exists("email", $customer) 
 			&& array_key_exists("address", $customer) && array_key_exists("city", $customer)

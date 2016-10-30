@@ -114,7 +114,6 @@ function ParseTemplateLinks(container)
 
 function Ajax(object, dataSet, callback, errorSelector)
 {
-	//TODO: catch 404 and 403 and reroute...perhaps others too
 
 	$.ajax({
 	  url: GetLocalUrl("DataControllers/"+object+"DataController.php"),
@@ -128,6 +127,7 @@ function Ajax(object, dataSet, callback, errorSelector)
 	  	else if(xhr.status == 403)
 	  	{
 	  		console.log("403 forbidden. Need to redirect to 403 page.");
+	  		//TODO: make 403 page and redirect
 	  	}
 	  	else if(xhr.status == 400)
 	  	{

@@ -28,7 +28,6 @@ function CaptureCharge($id)
 {
 	//$charge = \Stripe\Charge::retrieve($id);
 	//$charge->capture();
-	//TODO: more catch errors
 }
 
 function RefundCharge($id, $amount)
@@ -46,6 +45,32 @@ function RefundCharge($id, $amount)
 function GetCharge($id)
 {
 	return \Stripe\Charge::retrieve($id);
+}
+
+function CreateCardCustomer($token)
+{
+	/*$customer = \Stripe\Customer::create(array(
+  	  "source" => $token,
+  	  "description" => "Back-order Customer")
+	);
+	
+	return $customer->id;
+	*/
+	
+	return "ch_FAKE_CUSTOMER";
+}
+
+function ChargeCustomer($customerId, $amount)
+{
+	$amount = intval($amount * 100);
+
+	$response = \Stripe\Charge::create(array(
+  	  "amount"   => $amount,
+  	  "currency" => "usd",
+  	  "customer" => $customerId
+  	));
+  	
+  	return $response['id'];
 }
 
 ?>
