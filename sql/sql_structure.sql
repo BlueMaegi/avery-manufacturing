@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:8889
--- Generation Time: Oct 24, 2016 at 04:34 AM
+-- Generation Time: Oct 30, 2016 at 09:42 PM
 -- Server version: 5.5.42
 -- PHP Version: 5.6.10
 
@@ -46,7 +46,8 @@ CREATE TABLE `Customers` (
   `LastFour` int(4) NOT NULL,
   `Phone` varchar(10) NOT NULL,
   `DateCreated` datetime NOT NULL,
-  `EpAddressId` varchar(50) DEFAULT NULL
+  `EpAddressId` varchar(50) DEFAULT NULL,
+  `StripeCustomerId` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
