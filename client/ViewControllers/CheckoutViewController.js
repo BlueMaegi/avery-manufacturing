@@ -243,6 +243,7 @@ function CompletePurchase()
 		epLabelId:shipmentObj.rateId,
 		cardId: card.id,
 		lastFour: card.numberField.val().substr(card.numberField.val().length - 4),
+		email: shipmentObj.emailField.val(),
 		orderItems:[]
 	};
 	

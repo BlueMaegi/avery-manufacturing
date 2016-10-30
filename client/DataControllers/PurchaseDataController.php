@@ -93,8 +93,14 @@ try
 		{
 			$stripeId = CreateCardCustomer($purchase['cardId']);
 			$customer['stripeCustomerId'] = $stripeId;
+			$customer['lastFour'] = $customer['lastfour'];
+			$customer['epAddressId'] = $customer['epaddressid'];
 			UpdateCustomer($customer);
 			$shipment['status'] = 5;
+			$shipment['rateType'] = $shipment['ratetype'];
+			$shipment['taxAmount'] = $shipment['taxamount'];
+			$shipment['epLabelId'] = $shipment['eplabelid'];
+			$shipment['epShipmentId'] = $shipment['epshipmentid'];
 			UpdateShipment($shipment);		
 		}
 		
@@ -171,6 +177,8 @@ function ValidatePurchase($data)
 		$customer = GetCustomerFromEp(SanitizeString($data['epLabelId'], 100));
 		if(array_key_exists("lastFour", $data)) 
 			$customer["lastFour"] = ThrowInvalid(ValidateIntParam($data['lastFour'], 4));
+		if(array_key_exists("email", $data)) 
+			$customer["email"] = ThrowInvalid(SanitizeString($data['email'], 200));
 		$customer = ThrowInvalid(ValidateCustomer($customer));
 		$purchase['customer'] = $customer;
 

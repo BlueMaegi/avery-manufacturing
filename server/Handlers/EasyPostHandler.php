@@ -124,12 +124,13 @@ function GetCustomerFromEp($rateId)
 	
 	$customer = "";
 	$customer["name"] = $shipment->name;
-	$customer["email"] = $shipment->email;
+	//$customer["email"] = $shipment->email; Easy Post is broken apparently
 	$customer["address"] = $shipment->street1.$shipment->street2;
 	$customer["city"] = $shipment->city;
 	$customer["state"] = $shipment->state;
 	$customer["zip"] = $shipment->zip;
 	$customer["phone"] = $shipment->phone;
+	$customer["epAddressId"] = $shipment->id;
 	
 	return $customer;
 }
@@ -155,6 +156,7 @@ function ValidateAddress($data)
 		$address['company'] = null;
 		$address['street2'] = null;
 		$address['name'] = null;
+		$address['email'] = null;
 		
 		if(array_key_exists("street1", $data))
 			$address["street1"] = SanitizeString($data["street1"]);
@@ -172,6 +174,8 @@ function ValidateAddress($data)
 			$address["phone"] = SanitizeString($data["phone"], 15);
 		if(array_key_exists("name", $data))
 			$address["name"] = SanitizeString($data["name"]);
+		if(array_key_exists("email", $data))
+			$address["email"] = SanitizeString($data["email"]);
 
 		if(array_key_exists("street1", $address) && array_key_exists("city", $address)
 			&& array_key_exists("state", $address) && array_key_exists("zip", $address)
