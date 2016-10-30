@@ -18,6 +18,23 @@ $(function(){
 					window.location.reload();
 				});
 			});
+			
+			$(".secondary-button.refund").click(function()
+			{
+				var total = parseFloat($("span.total").text());
+				var str = $("input.refund").val();
+				if(str.indexOf("$") >= 0) str = str.substr(str.indexOf("$") +1);
+				var amount = parseFloat(str);
+				
+				if(amount <= 0 || amount > total)
+					return false;
+				
+				var authId = localStorage.getItem("id");
+				var tok = sessionStorage.getItem("tolkien");	
+				Ajax("Purchase", {"func":"refund", "orderId":orderId, "amount":amount, "authId":authId, "auth":tok}, function(){
+					window.location.reload();
+				});
+			});
 		}
 	});
 });
@@ -117,6 +134,7 @@ function RefreshPrices()
 {
 	var taxTotal = 0;
 	var total = 0;
+	var refundTotal = parseFloat($("p.refund").text());
 	
 	$("td.tax").each(function(idx, p)
 	{
@@ -131,4 +149,5 @@ function RefreshPrices()
 	total += taxTotal;
 	$("span.total-tax").text(taxTotal.toFixed(2));
 	$("span.total").text(total.toFixed(2));
+	$("span.total-refund").text(refundTotal.toFixed(2));
 }

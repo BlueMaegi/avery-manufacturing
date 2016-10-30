@@ -32,14 +32,16 @@ function CaptureCharge($id)
 
 function RefundCharge($id, $amount)
 {
-	$amount = intval($amount * 100);
+	/*$amount = intval($amount * 100);
 
 	$refund = \Stripe\Refund::create(array(
 	  "charge" => $id,
 	  "amount" => $amount
-	));
+	));*/
 	
-	//return $refund? catch errors?
+	//return $refund? 
+	
+	return "FAKE_REFUND_ID";
 }
 
 function GetCharge($id)

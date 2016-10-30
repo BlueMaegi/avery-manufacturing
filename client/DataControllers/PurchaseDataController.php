@@ -27,6 +27,25 @@ try
 	
 		SetResult(json_encode($chargeId));
 	}
+	
+	if($command == "refund" && isset($_POST['orderId']) && isset($_POST['amount']))
+	{
+		ValidateToken();
+		$id = ThrowInvalid(ValidateIntParam($_POST['orderId']));
+		$amount = ThrowInvalid(ValidateFloatParam($_POST['amount'], 2));
+		$order = ThrowInvalid(GetOrder($id))[0];
+		
+		if(!$order['stripechargeid'])
+			throw new Exception("Cannot refund an order that has not yet been charged.", 400);
+		
+		$refundId = RefundCharge($id, $amount);
+			
+		$order['stripeChargeId'] = $order['stripechargeid'];
+		$order['refundAmount'] = $amount;
+		UpdateOrder($order);
+		
+		SetResult(json_encode($refundId));
+	}
 
 	if($command == "shipping" && isset($_POST['address']))
 	{
@@ -47,7 +66,6 @@ try
 		$rates = GetShipmentRates($addressId, $productId, 1); //HARD CODED LOCATION HERE
 		SetResult(json_encode($rates));
 	}
-	
 
 	if($command == "complete" && isset($_POST['purchase']))
 	{
@@ -85,6 +103,7 @@ try
 		{
 			$stripeId = CreateCharge($purchase['cardId'], $totalCharge, true);
 			$order['stripeChargeId'] = $stripeId;
+			$order['refundAmount'] = $order['refundamount'];
 			UpdateOrder($order);
 			foreach($purchase['orderItems'] as $item)
 				ProcessInventory($order['id'], $item['productId']);
@@ -148,6 +167,7 @@ try
 		
 		$stripeId = ChargeCustomer($order['stripecustomerid'], $total);
 		$order['stripeChargeId'] = $stripeId;
+		$order['refundAmount'] = $order['refundamount'];
 		UpdateOrder($order);
 			
 		foreach($items as $i)

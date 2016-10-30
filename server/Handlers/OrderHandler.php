@@ -63,10 +63,11 @@ function UpdateOrder($order)
 	
 	if($existing)
 	{
+		$params[] = $order["refundAmount"];
 		$params[] = $order["stripeChargeId"];
 		$params[] = $order["id"];	
 		
-		do_query("UPDATE Orders SET StripeChargeId = ? WHERE Id = ?","si", $params);
+		do_query("UPDATE Orders SET RefundAmount = ?, StripeChargeId = ? WHERE Id = ?","ssi", $params);
 	}
 	close_db();
 	
@@ -146,6 +147,7 @@ function ValidateOrder($data)
 		$order = "";
 		$order['id'] = null;
 		$order['stripeChargeId'] = null;
+		$order['refundAmount'] = null;
 		
 		if(array_key_exists("id", $data))
 			$order["id"] = ValidateIntParam($data["id"]);
@@ -153,6 +155,8 @@ function ValidateOrder($data)
 			$order["customerId"] = ValidateIntParam($data["customerId"]);
 		if(array_key_exists("stripeChargeId", $data))
 			$order["stripeChargeId"] = SanitizeString($data["stripeChargeId"], 100);
+		if(array_key_exists("refundAmount", $data))
+			$order["refundAmount"] = ValidateFloatParam($data["refundAmount"], 2);
 				
 		if(array_key_exists("customerId", $order))
 			return $order;
