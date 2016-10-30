@@ -13,13 +13,16 @@ function GetOrders()
 			WHEN one.id IS NOT NULL THEN 'In-Progress'
 			WHEN zero.id IS NOT NULL THEN 'New'
 			WHEN two.id IS NOT NULL THEN 'Shipped'
+			WHEN five.id IS NOT NULL THEN 'Back-Order'
 			ELSE 'None'
 		END AS 'status' 
 		FROM Orders o JOIN Customers c on c.Id = o.CustomerId
 		LEFT OUTER JOIN Shipments zero on zero.OrderId = o.id and zero.status = 0
 		LEFT OUTER JOIN Shipments one on one.OrderId = o.id and one.status = 1
 		LEFT OUTER JOIN Shipments two on two.OrderId = o.id and two.status = 2
-		LEFT OUTER JOIN Shipments three on three.OrderId = o.id and three.status = 3","","");
+		LEFT OUTER JOIN Shipments three on three.OrderId = o.id and three.status = 3
+		LEFT OUTER JOIN Shipments five on five.OrderId = o.id and five.status = 5
+		ORDER BY o.date DESC","","");
 	close_db();
 	return $orders;
 }

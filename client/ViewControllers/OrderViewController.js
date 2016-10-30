@@ -15,6 +15,7 @@ $(function(){
 });
 
 var orderId;
+var backOrder = false;
 
 function FormatDates()
 {
@@ -53,6 +54,8 @@ function FormatStatus()
 				break;
 			case 3: statusText = "Error";
 				break;	
+			case 5: statusText = "Back-Order";
+				break;
 		}
 		
 		$(s).text(statusText);
@@ -92,6 +95,11 @@ function LoadShipmentsTemplate()
 				$("#shipment-table").prepend(inner);
 				RefreshPrices();
 				FormatStatus();
+				if(o.status == 5)
+				{
+					$("div.secondary-button.ship").show();
+					backOrder = true;
+				}
 			});
 		});
 	});

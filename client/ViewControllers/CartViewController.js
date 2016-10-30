@@ -24,6 +24,7 @@ function LoadCartIntoTemplate()
 				inner = ParseObjectIntoTemplate(data[0], inner);
 				inner = inner.replace("[quantity]", quantity);
 				products[id] = SetupProductRow($.parseHTML(inner));
+				products[id].instock = data[0].instock;
 				$("#cart-table").append(products[id].element);
 				RefreshSubtotal();
 			});
@@ -53,6 +54,7 @@ function SetupProductRow(row)
 	product.quantity = parseInt(product.quantityField.val());
 	product.unitPrice = parseFloat($(row).find(".subtotal").attr("rel"));
 	product.maxQty = 50;
+	product.backorder = false;
 	
 	product.quantityField.change(function(evt)
 	{
@@ -105,12 +107,23 @@ function SetupProductRow(row)
 }
 
 function RefreshSubtotal()
-{
+{	
+	var outOfStock = false;
 	var subtotal = 0;
 	for(var p in products){
 		var row = products[p];
 		subtotal += row.unitPrice * row.quantity;
+		if(row.quantity > row.instock)
+		{
+			ShowError("Please note: One or more of your items is out of stock. If you proceed with this purchase, your entire order will be placed on Back Order. It may take up to 6 weeks for your order to ship.", $(products[p].element).find("td:nth-of-type(2)"));
+			outOfStock = true;
+		}
+		else
+			$(products[p].element).find("td:nth-of-type(2)").removeClass("error-red");
 	};
+	
+	if(!outOfStock)
+		RemoveError();
 	$("#amount").text(subtotal.toFixed(2));
 	var subRow = $(".subtotal-row").remove();
 	$("#cart-table").append(subRow);

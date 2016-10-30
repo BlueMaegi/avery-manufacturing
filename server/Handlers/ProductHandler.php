@@ -16,7 +16,8 @@ function GetProducts()
 function GetProduct($productId)
 {
 	connect_to_db();
-	$product = do_query("SELECT * FROM Products WHERE Id = ?","i", [$productId]);
+	$product = do_query("SELECT p.*, SUM(i.quantity) as 'InStock' FROM Products p 
+		JOIN Inventory i ON p.Id = i.productId WHERE p.Id = ?","i", [$productId]);
 	close_db();
 	return $product;
 }

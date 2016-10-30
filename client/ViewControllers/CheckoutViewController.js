@@ -37,6 +37,11 @@ function LoadCartIntoTemplate()
 				inner = inner.replace("[quantity]", quantity);
 				$("#order-table").prepend(inner);
 				$("#order-table .subtotal").first().text("$ "+price);
+				if(data[0].instock < quantity)
+				{
+					$(".error-permanent").show().text("You have selected out-of-stock items. Your order will be placed on back-order. Please allow for up to 6 weeks of processing time before your order ships.");
+					$("#order-table tr").first().find("td:nth-of-type(1)").css("color", "red");
+				}
 				products[id] = price;
 				RefreshPrices();
 			});
