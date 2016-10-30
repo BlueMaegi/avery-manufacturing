@@ -30,7 +30,7 @@ function GetOrders()
 function GetOrder($orderId)
 {
 	connect_to_db();
-	$order = do_query("SELECT o.*, c.Name as CustomerName, c.Address, c.City, c.State, c.Zip, c.Phone, c.Email, c.LastFour
+	$order = do_query("SELECT o.*, c.Name as CustomerName, c.Address, c.City, c.State, c.Zip, c.Phone, c.Email, c.LastFour, c.StripeCustomerId
 	FROM Orders o JOIN Customers c ON c.id = o.CustomerId WHERE o.Id = ?","i", [$orderId]);
 	close_db();
 	return $order;

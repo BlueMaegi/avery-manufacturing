@@ -77,7 +77,7 @@ try
 				$sufficientStock = false;
 			
 			$item['taxAmount'] = $product['price'] * $taxRate * $item['quantity'];
-			$totalCharge += $product['price'] + $item['taxAmount'];
+			$totalCharge += ($product['price'] * $item['quantity']) + $item['taxAmount'];
 			$newItem = CreateOrderItem($item);
 		}
 		
@@ -113,15 +113,45 @@ try
 	
 	if($command == "backorder" && isset($_POST['orderId']))
 	{
-		//check order exists & sufficient inventory
-		//calculate charge amount
-			//shipping + ship tax
-			//(product price * quantity) + orderItem tax
-		//charge stripe
-		//update order with charge ID
-		//process inventory
-		//update shipment to status 0
+		ValidateToken();
 		
+		$orderId = ThrowInvalid(ValidateIntParam($_POST['orderId']));
+		$items = ThrowInvalid(GetOrderItems($orderId));
+		$order = ThrowInvalid(GetOrder($orderId))[0];
+		$shipments = GetOrderShipments($orderId);
+		
+		$total = 0;
+		foreach($items as $i)
+		{
+			if(!CheckInventoryExists($i['productid'], $i['quantity']))
+				throw new Exception("Cannot ship stock that doesn't exist.", 400);
+			
+			$total += floatval($i['taxamount']);
+			$total += floatval($i['price']) * floatval($i['quantity']);
+		}
+
+		foreach($shipments as $s)
+		{
+			if($s['status'] != 5)
+				continue;
+				
+			$total += floatval($s['cost']);
+			$total += floatval($s['taxamount']);
+			
+			$s['status'] = 0;
+			$s['rateType'] = $s['ratetype'];
+			$s['taxAmount'] = $s['taxamount'];
+			$s['epLabelId'] = $s['eplabelid'];
+			$s['epShipmentId'] = $s['epshipmentid'];
+			UpdateShipment($s);	
+		}
+		
+		$stripeId = ChargeCustomer($order['stripecustomerid'], $total);
+		$order['stripeChargeId'] = $stripeId;
+		UpdateOrder($order);
+			
+		foreach($items as $i)
+			ProcessInventory($orderId, $i['productid']);
 	}
 
 	ReturnResult();

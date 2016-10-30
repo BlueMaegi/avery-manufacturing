@@ -10,6 +10,14 @@ $(function(){
 			{
 				LoadDataTemplate($(".data-template[rel='order']"), orderId)
 			}
+			
+			$(".secondary-button.ship").click(function(){
+				var authId = localStorage.getItem("id");
+				var tok = sessionStorage.getItem("tolkien");
+				Ajax("Purchase", {"func":"backorder", "orderId":orderId, "authId":authId, "auth":tok}, function(){
+					window.location.reload();
+				});
+			});
 		}
 	});
 });
@@ -120,6 +128,7 @@ function RefreshPrices()
 		total += parseFloat($(s).text());
 	});
 	
+	total += taxTotal;
 	$("span.total-tax").text(taxTotal.toFixed(2));
 	$("span.total").text(total.toFixed(2));
 }

@@ -9,7 +9,7 @@ $errors = "";
 $result = "";
 $baseRestFunctions = ["get", "create", "update", "delete"];
 $userRestFunctions = ["login", "logout", "refresh"];
-$purchaseRestFunctions = ["shipping", "rates", "card", "complete"];
+$purchaseRestFunctions = ["shipping", "rates", "card", "complete", "backorder"];
 
 function ValidateRequest($type = '')
 {

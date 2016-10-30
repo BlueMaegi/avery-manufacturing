@@ -64,13 +64,16 @@ function ChargeCustomer($customerId, $amount)
 {
 	$amount = intval($amount * 100);
 
-	$response = \Stripe\Charge::create(array(
+	/*$response = \Stripe\Charge::create(array(
   	  "amount"   => $amount,
   	  "currency" => "usd",
   	  "customer" => $customerId
   	));
   	
   	return $response['id'];
+  	*/
+  	
+  	return "ch_FAKE_CHARGE";
 }
 
 ?>
