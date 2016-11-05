@@ -1,0 +1,32 @@
+<p>Order Number: [code]</p>
+<div id="column1">
+	<h2>Customer Info</h2>
+	<p>[customername]</p>
+	<!--<p>[company]</p>-->
+	<p>[address]</p>
+	<p>[city], [state], [zip]</p>
+	<p class="phone">[phone]</p>
+</div>
+<div id="column2">
+	<h2>Order Details</h2>
+	<table>
+	<tr>
+		<td>Subtotal:</td><td>$<span class="subtotal">[subtotal]</span></td>
+	</tr>
+	<tr>
+		<td>Shipping:</td><td>$<span class="subtotal">[shiptotal]</span></td>
+	</tr>
+	<tr>
+		<td>Tax:</td><td>$<span class="subtotal">[taxtotal]</span></td>
+	</tr>
+	<tr><td colspan="2"><hr></td></tr>
+	<tr>
+		<td>Total:</td><td>$<span class="total">0.00</span></td>
+	</tr>
+	</table>
+	<p>Payment: Visa ends with *[lastfour]</p>
+	<p>Placed On: <span class="date">[date]</span></p>
+	<p>Shipment Tracking Number(s):</p>
+	<table id="shipment-table"></table>
+</div>
+<p>A copy of this receipt has been emailed to [email]</p>

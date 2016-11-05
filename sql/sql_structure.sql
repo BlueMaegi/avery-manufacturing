@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:8889
--- Generation Time: Oct 30, 2016 at 09:42 PM
+-- Generation Time: Nov 05, 2016 at 09:29 PM
 -- Server version: 5.5.42
 -- PHP Version: 5.6.10
 
@@ -161,7 +161,8 @@ CREATE TABLE `Shipments` (
   `Status` int(3) NOT NULL DEFAULT '0',
   `OrderId` int(11) NOT NULL,
   `EpLabelId` varchar(100) DEFAULT NULL,
-  `EpShipmentId` varchar(100) DEFAULT NULL
+  `EpShipmentId` varchar(100) DEFAULT NULL,
+  `TrackingCode` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

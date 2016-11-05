@@ -115,19 +115,21 @@ try
 			$customer['lastFour'] = $customer['lastfour'];
 			$customer['epAddressId'] = $customer['epaddressid'];
 			UpdateCustomer($customer);
-			$shipment['status'] = 5;
-			$shipment['rateType'] = $shipment['ratetype'];
-			$shipment['taxAmount'] = $shipment['taxamount'];
-			$shipment['epLabelId'] = $shipment['eplabelid'];
-			$shipment['epShipmentId'] = $shipment['epshipmentid'];
-			UpdateShipment($shipment);		
+			$shipment['status'] = 5;	
 		}
 		
 		$label = PurchaseLabel($shipment['eplabelid'], $shipment['epshipmentid']);
-		SaveLabelImage($shipment['id'], $label);
+		SaveLabelImage($shipment['id'], $label['url']);
+		
+		$shipment['trackingCode'] = $label['tracking'];
+		$shipment['rateType'] = $shipment['ratetype'];
+		$shipment['taxAmount'] = $shipment['taxamount'];
+		$shipment['epLabelId'] = $shipment['eplabelid'];
+		$shipment['epShipmentId'] = $shipment['epshipmentid'];
+		UpdateShipment($shipment);	
 		
 		//TODO: send receipt email	
-		SetResult(json_encode($totalCharge));	
+		SetResult(json_encode($order['code']));	
 	}
 	
 	if($command == "backorder" && isset($_POST['orderId']))

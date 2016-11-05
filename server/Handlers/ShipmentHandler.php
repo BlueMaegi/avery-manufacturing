@@ -29,6 +29,14 @@ function GetOrderShipments($id)
 	return $shipment;
 }
 
+function GetOrderShipmentsByCode($code)
+{
+	connect_to_db();
+	$shipment = do_query("SELECT TrackingCode FROM Shipments s JOIN Orders o ON o.id = s.OrderId WHERE o.Code = ?","s", array($code));
+	close_db();
+	return $shipment;
+}
+
 function CreateShipment($shipment)
 {
 	connect_to_db();
@@ -39,13 +47,15 @@ function CreateShipment($shipment)
 	$params[] = $shipment["epLabelId"];
 	$params[] = $shipment["epShipmentId"];
 	$params[] = $shipment["taxAmount"];
+	$params[] = $shipment["trackingCode"];
 	
 	$existingOrder = do_query("SELECT * FROM Orders WHERE Id = ?","i", array($shipment["orderId"]));
 	$shipment = false;
 	
 	if($existingOrder)
 	{
-		$id = do_query("INSERT INTO Shipments (RateType, Cost, Status, OrderId, EpLabelId, EpShipmentId, TaxAmount) VALUES(?, ?, ?, ?, ?, ?, ?)", "ssiisss", $params);
+		$id = do_query("INSERT INTO Shipments (RateType, Cost, Status, OrderId, EpLabelId, EpShipmentId, TaxAmount, TrackingCode) 
+			VALUES(?, ?, ?, ?, ?, ?, ?, ?)", "ssiissss", $params);
 		$shipment = do_query("SELECT * FROM Shipments WHERE id = ?","i", array($id));
 	}
 	
@@ -65,9 +75,11 @@ function UpdateShipment($shipment)
 		$params[] = $shipment["epLabelId"];
 		$params[] = $shipment["epShipmentId"];
 		$params[] = $shipment["taxAmount"];
+		$params[] = $shipment["trackingCode"];
 		$params[] = $shipment["id"];
 		
-		do_query("UPDATE Shipments SET RateType = ?, Cost = ?, Status = ?, EpLabelId = ?, EpShipmentId = ?, TaxAmount = ? WHERE Id = ?","ssisssi", $params);
+		do_query("UPDATE Shipments SET RateType = ?, Cost = ?, Status = ?, 
+			EpLabelId = ?, EpShipmentId = ?, TaxAmount = ?, TrackingCode = ? WHERE Id = ?","ssissssi", $params);
 	}
 	close_db();
 	
@@ -117,6 +129,7 @@ function ValidateShipment($data)
 		$shipment['orderId'] = null;
 		$shipment["epLabelId"] = null;
 		$shipment["epShipmentId"] = null;
+		$shipment["trackingCode"] = null;
 		$shipment["taxAmount"] = 0;
 		
 		if(array_key_exists("id", $data))
@@ -135,6 +148,8 @@ function ValidateShipment($data)
 			$shipment["epLabelId"] = SanitizeString($data["epLabelId"], 100);
 		if(array_key_exists("epShipmentId", $data))
 			$shipment["epShipmentId"] = SanitizeString($data["epShipmentId"], 100);
+		if(array_key_exists("trackingCode", $data))
+			$shipment["trackingCode"] = SanitizeString($data["trackingCode"], 100);
 				
 		if(array_key_exists("rateType", $shipment) && array_key_exists("cost", $shipment)
 			&& array_key_exists("status", $shipment))

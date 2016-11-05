@@ -258,9 +258,9 @@ function CompletePurchase()
 	});
 	
 	Ajax("Purchase", {"func":"complete", "purchase":purchase}, function(data){
-		console.log(data);
-		//TODO: clear cart cookie
-		//TODO: navigate to receipt page
+		DestroyCookie();
+		data = data.substr(0,9);
+		window.location.href = GetLocalUrl("receipt.html?code="+data);
 	});
 }
 

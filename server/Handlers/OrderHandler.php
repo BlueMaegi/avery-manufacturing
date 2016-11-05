@@ -36,6 +36,23 @@ function GetOrder($orderId)
 	return $order;
 }
 
+function GetOrderByCode($orderCode)
+{
+	connect_to_db();
+	$order = do_query("SELECT o.*, c.Name as CustomerName, c.Address, c.City, c.State, c.Zip, c.Phone, c.Email, c.LastFour, c.StripeCustomerId,
+	oi.total as subtotal,
+	oi.itemTax + s.shipTax as taxTotal,
+	s.shipTotal
+	FROM Orders o JOIN Customers c ON c.id = o.CustomerId 
+	LEFT OUTER JOIN (SELECT i.OrderId, SUM(i.taxAmount) as itemTax, SUM(i.quantity * p.price) as total
+		FROM OrderItems i JOIN Products p on p.id = i.productid GROUP BY i.orderId) as oi ON oi.OrderId = o.id
+	LEFT OUTER JOIN (SELECT orderId, SUM(cost) as shipTotal, SUM(taxAmount) shipTax 
+		FROM Shipments GROUP BY id) as s on s.OrderId = o.id
+	WHERE o.code = ?","s", [$orderCode]);
+	close_db();
+	return $order;
+}
+
 function CreateOrder($order)
 {
 	connect_to_db();

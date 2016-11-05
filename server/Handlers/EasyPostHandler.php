@@ -112,7 +112,8 @@ function PurchaseLabel($rateId, $shipmentId)
 	$shipment = \EasyPost\Shipment::retrieve($shipmentId);
 
 	$thing = $shipment->buy(array('rate'=>array('id'=>$rateId)));
-	$label = $thing->postage_label->label_url;
+	$label['url'] = $thing->postage_label->label_url;
+	$label['tracking'] = $thing->tracking_code;
 
 	return $label;
 }

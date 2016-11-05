@@ -10,7 +10,7 @@ try
 {
 	$command = ValidateRequest();
 
-	if($command == "get" && !isset($_POST['id'])  && !isset($_POST['groupBy']))
+	if($command == "get" && !isset($_POST['id']) && !isset($_POST['groupBy']) && !isset($_POST['code']))
 	{
 		ValidateToken();
 		SetResult(ToJson(GetOrders()));
@@ -20,6 +20,17 @@ try
 	{
 		$id = ThrowInvalid(ValidateIntParam($_POST['id']));
 		$item = GetOrder($id);
+	
+		if(!$item)
+			throw new Exception("Not Found", 404);
+	
+		SetResult(ToJson($item));
+	}
+	
+	if($command == "get" && isset($_POST['code']))
+	{
+		$code = SanitizeString($_POST['code'], 12);
+		$item = GetOrderByCode($code);
 	
 		if(!$item)
 			throw new Exception("Not Found", 404);
