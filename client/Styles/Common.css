@@ -22,6 +22,10 @@ input[type='text'], textarea{
     padding: 6px 8px;
 }
 
+.highlight{
+	color: rgb(222,167,57);
+}
+
 .title{
 	color: rgb(222,167,57);
     font-weight: bold;

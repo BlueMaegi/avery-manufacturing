@@ -1,14 +1,16 @@
-<p>Order Number: [code]</p>
+<p>Order Number: [code]&nbsp;&nbsp;&nbsp;A copy of this receipt has been emailed to <span class="highlight">[email]</span></p>
 <div id="column1">
 	<h2>Customer Info</h2>
-	<p>[customername]</p>
-	<!--<p>[company]</p>-->
-	<p>[address]</p>
-	<p>[city], [state], [zip]</p>
-	<p class="phone">[phone]</p>
+	<p class="address">[customername]</p>
+	<!--<p class="address">[company]</p>-->
+	<p class="address">[address]</p>
+	<p class="address">[city], [state], [zip]</p>
+	<p>Phone Number: <span class="phone highlight">[phone]</span></p>
+	<p class="ccard">Card ends with *[lastfour]</p>
 </div>
 <div id="column2">
 	<h2>Order Details</h2>
+	<p>Placed On: <span class="date">[date]</span></p>
 	<table>
 	<tr>
 		<td>Subtotal:</td><td>$<span class="subtotal">[subtotal]</span></td>
@@ -24,9 +26,7 @@
 		<td>Total:</td><td>$<span class="total">0.00</span></td>
 	</tr>
 	</table>
-	<p>Payment: Visa ends with *[lastfour]</p>
-	<p>Placed On: <span class="date">[date]</span></p>
-	<p>Shipment Tracking Number(s):</p>
+	
+	<h3>Tracking Number(s):</h3>
 	<table id="shipment-table"></table>
 </div>
-<p>A copy of this receipt has been emailed to [email]</p>

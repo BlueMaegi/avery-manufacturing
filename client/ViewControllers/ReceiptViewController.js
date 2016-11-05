@@ -17,6 +17,7 @@ function LoadTemplate()
 			$("div.data-template").prepend(inner);
 			RefreshPrices();
 			FormatDates();
+			FormatPhone();
 			LoadShipmentsTemplate();
 		});
 	});
@@ -27,12 +28,13 @@ function LoadShipmentsTemplate()
 	$.get(GetLocalUrl("Templates/receipt-shipment.html"), function(template) {
 		Ajax("Shipment", {"func":"get", "code":orderCode}, function(data){
 			$(data).each(function(idx, o){
-				console.log(o);
 				var inner = template;
 				inner = ParseObjectIntoTemplate(o, inner);
-				console.log(inner);
 				$("#shipment-table").prepend(inner);
+				$("#shipment-table tr").first().find(".ship-num").text(idx+1);
 			});
+			if(data.length > 1)
+				$(".ship-num").parent().show();
 		});
 	});
 }
@@ -68,6 +70,19 @@ function FormatDates()
   		if(month < 10) month = "0"+month;
   		
 		var formatted = month+ "/" +day+ "/" +year+ " " +hours+ ":" +minutes+ " "+ampm;
+		$(d).text(formatted);
+	});
+}
+
+function FormatPhone()
+{
+	$('.phone').each(function(idx, d){
+		var num = $(d).text();
+		var areaCode = num.substr(0,3);
+		var first = num.substr(3,3);
+		var second = num.substr(6,4);
+  		
+		var formatted = "(" +areaCode+ ") " +first+ "-" +second;
 		$(d).text(formatted);
 	});
 }
