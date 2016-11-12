@@ -8,9 +8,13 @@ function SanitizeString($dirty, $maxLength = 255)
 	return $clean;
 }
 
-function ValidateIntParam($data, $maxLength = 11)
+function ValidateIntParam($data, $maxLength = 11, $allowNegative = false)
 {
 	$integer = intval(substr($data,0,$maxLength));
+	
+	if($allowNegative)
+		return $integer;
+	
 	if($integer >= 0)
 		return $integer;
 		

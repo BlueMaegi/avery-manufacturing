@@ -12,7 +12,7 @@
 {text-align:center;}
 
 
-#inventory-table .quantity{
+#inventory-table .quantity, #inventory-table.price{
 	width: 3em;
     line-height: 0.5em;
     text-align: center;
@@ -20,6 +20,10 @@
     top: 1px;
     padding-left: 0px;
     padding-right: 0px;
+}
+
+#inventory-table .price{
+	width: 5em;
 }
 
 #column2 .primary-button{margin-top:3em; width:100%;}

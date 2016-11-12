@@ -17,6 +17,6 @@ define("STRIPE_KEY", 'sk_test_TD3vu14u4eVIBbDUfQ0kKWc5');
 
 define("POWERSHELL_SECRET", "ocarinaoftime");
 
-const TRANSACTIONS = array('Add_Inventory' => 1, "Sale" => 2, "Return" => 3);
+const TRANSACTIONS = array('Add_Inventory' => 1, "Sale" => 2, "Return" => 3, "Price_Change" => 4);
 
 ?>

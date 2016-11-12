@@ -75,7 +75,7 @@ function ValidateHistory($data)
 		if(array_key_exists("inventoryId", $data))
 			$history["inventoryId"] = ValidateIntParam($data["inventoryId"]);
 		if(array_key_exists("quantity", $data))
-			$history["quantity"] = ValidateIntParam($data["quantity"]);
+			$history["quantity"] = ValidateIntParam($data["quantity"], 11, true);
 		if(array_key_exists("eventType", $data) && ValidateIntParam($data["eventType"], 3))
 		{
 			$event = ValidateIntParam($data["eventType"], 3);
