@@ -97,7 +97,7 @@ function Save()
 	Ajax("Product", {"func":"create", "authId":authId, "auth":tok, "product":ajaxProd, "parcel":ajaxParcel}, function(data){
 		ajaxInventory.productId = data[0].id;
 		Ajax("Inventory", {"func":"create", "authId":authId, "auth":tok, "inventory":ajaxInventory}, function(){
-			//window.location.href = GetLocalUrl("/admin/inventory.html");
+			window.location.href = GetLocalUrl("/admin/inventory.html");
 		});
 	});
 }
