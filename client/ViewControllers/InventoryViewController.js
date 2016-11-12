@@ -4,6 +4,10 @@ $(function(){
 		inventoryId = GetUrlParam('id');
 		if(!inventoryId)
 			LoadItemsTemplate();
+			
+		$(".new-product").click(function(){ 
+			window.location.href = GetLocalUrl("Admin/new-product.html");
+		});
 	});
 });
 

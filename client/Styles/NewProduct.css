@@ -1,0 +1,31 @@
+#column1, #column2{width:45%; margin-right: 3em;}
+
+h1{margin: 0.5em 0;}
+h3{
+	margin-top: 1.6em;
+    margin-bottom: 0.5em;
+    text-decoration: underline;
+}
+
+input{
+	width:100%;
+}
+
+input[rel="price"]{width:85%;}
+
+td.small{
+	width:7em
+}
+
+#dimensions-table tr td:nth-child(odd){
+	width:4em;
+	padding-right: 0;
+}
+#dimensions-table tr td:nth-child(even){
+	width:2em;
+}
+
+.primary-button.save{
+	float: right;
+    width: 12em;
+}

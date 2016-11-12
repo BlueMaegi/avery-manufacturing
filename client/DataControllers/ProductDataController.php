@@ -27,21 +27,17 @@ try
 		SetResult(ToJson($item));
 	}
 
-	if($command == "create" && isset($_POST['product']))
+	if($command == "create" && isset($_POST['product']) && isset($_POST['parcel']))
 	{
 		ValidateToken();
 		$item = ThrowInvalid(ValidateProduct($_POST['product']));
-
-		$newProduct = CreateProduct($item);
-		SetResult(ToJson($newProduct));	
-	}
-
-	if($command == "create" && isset($_POST['parcel']))
-	{
 		$parcel = ThrowInvalid(ValidateParcel($_POST['parcel']));
 
 		$epParcel = CreateParcel($parcel);
-		SetResult($epParcel['id']);
+		$item['epParcelId'] = $epParcel['id'];
+
+		$newProduct = CreateProduct($item);
+		SetResult(ToJson($newProduct));	
 	}
 
 	if($command == "update" && isset($_POST['product']))

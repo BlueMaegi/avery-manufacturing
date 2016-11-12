@@ -1,0 +1,70 @@
+<html>
+<head>
+	<title>Create</title>
+	<link rel='shortcut icon' href='../Images/favicon.ico' type='image/x-icon'/ >
+	<script type="text/javascript" src="../JsLib/jquery-3.1.0.js"></script>
+	<script type="text/javascript" src="../JsLib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="../ViewControllers/CommonViewController.js"></script>
+	<script type="text/javascript" src="../ViewControllers/LoginViewController.js"></script>
+	<script type="text/javascript" src="../ViewControllers/NewProductViewController.js"></script>
+	<link rel="stylesheet" type="text/css" href="../Styles/Common.css">
+	<link rel="stylesheet" type="text/css" href="../Styles/NewProduct.css">
+</head>
+<body>
+	<div class="template autoload" rel="navbar"></div>
+	<div class="center-main form">
+		<p class="error-message"></p>
+		<div id="column1">
+		<h1>Create Product</h1>
+		<table id="detail-table" class="form-table">
+				<tr>
+					<td colspan="3">Name:</td>
+				</tr>
+				<tr>
+					<td colspan="3"><input type="text" rel="name"/></td>
+				</tr>
+				<tr>
+					<td class="small">Unit Price:</td>
+					<td class="small">Initial Qty:</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="small">$ <input type="text" rel="price" class="float"/></td>
+					<td class="small"><input type="text" maxlength="3" rel="quantity" class="int"/></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan="3">Description:</td>
+				</tr>
+				</tr>
+					<td colspan="3"><input type="text" rel="description"/></td>
+				</tr>
+			</table>
+		</div>
+		<div id="column2">
+			<h3>Shipping Package Dimensions</h3>
+			<table id="dimensions-table" class="form-table">
+				<tr>
+					<td colspan="2">Height:</td>
+					<td colspan="2">Width:</td>
+					<td colspan="2">Length:</td>
+				</tr>
+				<tr>
+					<td><input type="text" rel="height" class="int"/></td><td>In.</td>
+					<td><input type="text" rel="width" class="int"/></td><td>In.</td>
+					<td><input type="text" rel="length" class="int"/></td><td>In.</td>
+				</tr>
+				<tr>
+					<td colspan="2">Weight:</td>
+				</tr>
+				<tr>
+					<td colspan="3"><input type="text" rel="weight" class="int"/></td><td>Oz.</td>
+				</tr>
+			</table>
+		</div>
+		<div class="primary-button save">Save</div>
+	</div>
+	<div class="center-main footer-filler"></div>
+	<div class="template autoload" rel="footer"></div>
+</body>
+</html>
