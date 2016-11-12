@@ -72,18 +72,23 @@
 	margin-top: 1.5em;
 }
 
+video{height:100%; width:100%}
+.video{position:relative;}
+
 .video .play-button{
-	background-color:rgba(255,255,255,0.2);
+	position:absolute;
+	background-color:rgba(255,255,255,0.3);
 	background-image: url('../Images/play_arrow.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 	height: 100%;
 	width: 100%;
 	opacity: 0.5;
+	z-index:2;
 	cursor:pointer;
 }
 .video .play-button:hover{
-	background-color:rgba(255,255,255,0.1);
+	background-color:rgba(255,255,255,0.15);
 	opacity:1.0;
 }
 

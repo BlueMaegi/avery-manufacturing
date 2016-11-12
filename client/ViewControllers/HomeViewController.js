@@ -3,6 +3,9 @@ $(function(){
 		SetupGallery($('.gallery'), 3);
 		
 		$('.primary-button.order-now').click(AddToCart);
+		$('.play-button').click(StartVideo);
+		$('video').get(0).onended = EndVideo;
+		$(window).resize(setDimensions);
 	});
 });
 
@@ -12,7 +15,7 @@ function SetupGallery(container, id)
 	g.nextButton = $('.btn-fwd', container);
 	g.backButton = $('.btn-back', container);
 	g.mainImage = $('.showcase', container);
-	g.totalImages = 5;
+	g.totalImages = 4;
 	g.imageBase = '../Images/Products/'+id+'/main_';
 	g.thumbBase = '../Images/Products/'+id+'/thumb_';
 	g.idx = 0;
@@ -24,8 +27,6 @@ function SetupGallery(container, id)
 	{
 		$('.thumbnails', container).append('<div rel="'+i+'" style="background-image:url(\''+g.thumbBase+i+'.jpg\');"></div>');
 	}
-	
-	$(window).resize(setDimensions);
 	
 	$('.thumbnails div').click(function(evt){
 		setImage($(evt.target).attr('rel'));
@@ -68,13 +69,16 @@ function SetupGallery(container, id)
 		g.idx = idx;
 	}
 	
-	function setDimensions()
-	{
-		var ratio = 1.80; //600px/333px
-		$('.showcase', container).height($('.showcase').width() * ratio);
-	}
-	
 	return g;
+}
+
+function setDimensions()
+{
+	var galleryRatio = 1.80; //600px/333px
+	$('.showcase').height($('.showcase').width() * galleryRatio);
+	
+	var videoRatio = 0.565;
+	$('.video').height($('.video').width() * videoRatio);
 }
 
 function AddToCart(evt)
@@ -91,4 +95,18 @@ function AddToCart(evt)
 		SetCookie(cart);
 	}
 	window.location = GetLocalUrl("cart.html");
+}
+
+function StartVideo()
+{
+	$('video').get(0).controls = true;
+	$('video').get(0).play();
+	$('.play-button').hide();
+}
+
+function EndVideo()
+{
+	$('video').get(0).controls = false;
+	$('video').get(0).currentTime = 0;
+	$('.play-button').show();
 }
