@@ -3,6 +3,7 @@
 	<title>Checkout</title>
 	<link rel='shortcut icon' href='Images/favicon.ico' type='image/x-icon'/ >
 	<script type="text/javascript" src="JsLib/jquery-3.1.0.js"></script>
+	<script type="text/javascript" src="JsLib/spin.min.js"></script>
 	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 	<script type="text/javascript" src="ViewControllers/CommonViewController.js"></script>
 	<script type="text/javascript" src="ViewControllers/CheckoutViewController.js"></script>
@@ -57,53 +58,58 @@
 					<td><input type="text" class="phone"/></td><td></td>
 				</tr>
 			</table>
-			<h2>Shipping Speed</h2>
-			<p class="no-shipping">Please enter a destination address to see shipping options.</p>
-			<table id="rates-table"></table>
+			
+			<div id="speed-wrapper">
+				<h2>Shipping Speed</h2>
+				<p class="no-shipping">Please enter a destination address to see shipping options.</p>
+				<table id="rates-table"></table>
+			</div>
 			<br/>
 			
 			<h2>Payment Information</h2>
-			<table id="card-details" class="form-table">
-				<tr>
-					<td>Card Number:</td>
-					<td>CSC:</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td><input type="text" maxlength="20" class="number"/></td>
-					<td><input type="text" maxlength="4" class="csc"/></td>
-				</tr>
-				<tr>
-					<td>Name on Card:</td><td colspan="2">Expiration:</td>
-				</tr>
-				<tr>
-					<td><input type="text" maxlength="50" class="name"/>
-					<td colspan="2">
-					<select class="exp-m">
-					  <option selected disabled hidden>MM</option>
-					  <option value="1">01</option>
-					  <option value="2">02</option>
-					  <option value="3">03</option>
-					  <option value="4">04</option>
-					  <option value="5">05</option>
-					  <option value="6">06</option>
-					  <option value="7">07</option>
-					  <option value="8">08</option>
-					  <option value="9">09</option>
-					  <option value="10">10</option>
-					  <option value="11">11</option>
-					  <option value="12">12</option>
-					</select>
-					<select class="exp-y">
-					  <option selected disabled hidden>YYYY</option>
-					  <option value="2016">2016</option>
-					  <option value="2017">2017</option>
-					  <option value="2018">2018</option>
-					  <option value="2019">2019</option>
-					</select>
-					</td>
-				</tr>
-			</table>
+			<div id="payment-wrapper">
+				<table id="card-details" class="form-table">
+					<tr>
+						<td>Card Number:</td>
+						<td>CSC:</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><input type="text" maxlength="20" class="number"/></td>
+						<td><input type="text" maxlength="4" class="csc"/></td>
+					</tr>
+					<tr>
+						<td>Name on Card:</td><td colspan="2">Expiration:</td>
+					</tr>
+					<tr>
+						<td><input type="text" maxlength="50" class="name"/>
+						<td colspan="2">
+						<select class="exp-m">
+						  <option selected disabled hidden>MM</option>
+						  <option value="1">01</option>
+						  <option value="2">02</option>
+						  <option value="3">03</option>
+						  <option value="4">04</option>
+						  <option value="5">05</option>
+						  <option value="6">06</option>
+						  <option value="7">07</option>
+						  <option value="8">08</option>
+						  <option value="9">09</option>
+						  <option value="10">10</option>
+						  <option value="11">11</option>
+						  <option value="12">12</option>
+						</select>
+						<select class="exp-y">
+						  <option selected disabled hidden>YYYY</option>
+						  <option value="2016">2016</option>
+						  <option value="2017">2017</option>
+						  <option value="2018">2018</option>
+						  <option value="2019">2019</option>
+						</select>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 		<div id="column2">
 			<h2>Order Summary</h2>

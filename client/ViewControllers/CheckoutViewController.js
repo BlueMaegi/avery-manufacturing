@@ -19,6 +19,21 @@ var card = {};
 var shipmentObj = {};
 var rates = [];
 
+var opts = {
+  lines: 9 // The number of lines to draw
+, length: 16 // The length of each line
+, width: 7 // The line thickness
+, radius: 24 // The radius of the inner circle
+, color: '#DEA739' // #rgb or #rrggbb or array of colors
+, opacity: 0.15 // Opacity of the lines
+, speed: 0.8 // Rounds per second
+, shadow: false // Whether to render a shadow
+, position: 'absolute' // Element positioning
+, scale: 0.75
+}
+
+var spinner = new Spinner(opts);
+
 function LoadCartIntoTemplate()
 {
 	if(cart == null || keys.length <= 0)
@@ -109,8 +124,10 @@ function SetupShipping(container)
 		};
 		
 		RemoveError();
+		
+		spinner.spin();
+		$("#speed-wrapper").prepend(spinner.el);
 		Ajax("Purchase", {"func":"shipping", "address":address}, function(data){
-			//TODO: show a loading spinner
 			SetupRates(data);
 		}, $("#column1 h2:nth-of-type(1)"));
 	}
@@ -119,6 +136,7 @@ function SetupShipping(container)
 	{
 		var productId = keys[0];
 		ResetRates();
+		
 		
 		$.get(GetLocalUrl("Templates/ship-rate.html"), function(template) {
 			Ajax("Purchase", {"func":"rates", "addressId":addressId, "productId":productId}, function(data){
@@ -130,6 +148,7 @@ function SetupShipping(container)
 					rates.push(SetupRate(inner, rate));
 					$("#rates-table").append(inner);
 				});
+				spinner.stop();
 			});
 		});
 	}
@@ -198,6 +217,9 @@ function SetupCard(container)
 		if(!allReady) return; //todo: alert the user
 		
 		RemoveError();
+		spinner.spin();
+		$("#payment-wrapper").prepend(spinner.el);
+		
 		Stripe.card.createToken({
 		  number: card.numberField.val(),
 		  cvc: card.cscField.val(),
@@ -205,13 +227,14 @@ function SetupCard(container)
 		  exp_year: card.expYearField.val(),
 		  name: card.nameField.val()
 		}, function(status, cardResult){
-			//TODO: show a loading spinner
 			if(cardResult.error)
 			{
 				ShowError("Error: "+cardResult.error.message, $("#column1 h2:nth-of-type(3)"));
 			}
 			else
 				card.id = cardResult["id"];
+			
+			spinner.stop();
 		});
 	}
 	
@@ -242,6 +265,9 @@ function CompletePurchase()
 		return;
 	}
 	
+	spinner.spin();
+	$("#column1").prepend(spinner.el);
+	
 	var selectedRate = $("input[value='"+shipmentObj.rateId+"']").siblings();
 	
 	var purchase = {
@@ -260,6 +286,7 @@ function CompletePurchase()
 	Ajax("Purchase", {"func":"complete", "purchase":purchase}, function(data){
 		DestroyCookie();
 		data = data.substr(0,9);
+		spinner.stop();
 		window.location.href = GetLocalUrl("receipt.html?code="+data);
 	});
 }
