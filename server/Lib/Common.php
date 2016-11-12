@@ -3,8 +3,7 @@
 function SanitizeString($dirty, $maxLength = 255)
 {
 	$clean = substr($dirty, 0, $maxLength);
-	//$dirty = str_replace("<br>", "&br&", $dirty);
-	//$clean = strip_tags($dirty);
+	$clean = preg_replace('/[^a-zA-Z0-9_\-?!.,@ ]/', '', $clean);
 	return $clean;
 }
 

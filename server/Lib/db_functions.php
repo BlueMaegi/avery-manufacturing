@@ -44,7 +44,7 @@ $DB = "";
 			for($i = 0; $i < strlen($paramIDs); $i++)
 			{
 				$bind_name = 'bind' . $i; //force array values to be references
-				$$bind_name = $params[$i];
+				$$bind_name = sanitize_for_HTML($params[$i]); //NOTE: sanitization for Avery Manufacturing only. May not apply to other systems
 				$paramArr[] = &$$bind_name;
 			}
 			call_user_func_array(array($stmt,'bind_param'),$paramArr); //pass in each array value as a parameter
